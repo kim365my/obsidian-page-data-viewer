@@ -6,3 +6,89 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+
+.toolbar {
+    display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+.toolbar-left {
+	display: flex;
+	position: sticky;
+	top: -34px;
+	background: var(--background-primary);
+}
+.toolbar-right {
+    display: flex;
+	margin-left: auto;
+}
+.toolbar .box {
+	position: relative;
+}
+
+.toolbar .menu {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	transform: translateY(100%);
+	max-height: 250px;
+	overflow: auto;
+}
+.toolbar .menu .menu-item {
+	align-items: start;
+	justify-content: space-between;
+}
+
+/* pagination */
+.toolbar .pagination-box {
+	display: flex;
+	flex-wrap:wrap;
+}
+.toolbar .pagination-box button {
+	background: transparent;
+}
+.toolbar .pagination-box button:hover,
+.toolbar .pagination-box button.is-active {
+	background: var(--background-modifier-hover);
+}
+/* filter showing box */
+.filter-showing-box {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	width: 100%;
+	flex-wrap: wrap;
+	padding: 4px;
+	line-height: 1.8;
+	font-size: small;
+}
+.filter-showing-box .filter-tip {
+	padding: 2px 0;
+	margin-right: 8px;
+}
+.filter-showing-box .filter-item {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	padding: 2px 8px;
+	margin-right: 6px;
+	cursor: pointer;
+	border: 1px solid var(--divider-color);
+	border-radius: 6px;
+	max-width: 200px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.block-language-page-table-csv .external-link {
+	background: none;
+}
+.block-language-page-table-csv del {
+	text-decoration: none;
+}
+.block-language-page-table-csv del::before {
+	content: " ";
+}
