@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { MenuContainer } from "./MenuContainer";
 import { sort } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 
-export default function SortBtn({sort}: {sort: sort[] | string[]}) {
+function SortBtn({sort}: {sort: sort[] | string[]}) {
 	const { selectSortNum, handleSort } = usePagesData();
 	const [visible, setVisible] = useState(false);
 	
@@ -42,3 +42,5 @@ export default function SortBtn({sort}: {sort: sort[] | string[]}) {
 		</div>
 	);
 }
+
+export default React.memo(SortBtn);

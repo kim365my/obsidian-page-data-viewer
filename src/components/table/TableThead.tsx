@@ -1,5 +1,6 @@
+import React from "react";
 
-export default function TableThead({rows}: {rows:string[]}) {
+function TableThead({rows}: {rows:string[]}) {
 	return (
 		<thead className="table-view-thead">
 			<tr className="table-view-tr-header">
@@ -12,3 +13,5 @@ export default function TableThead({rows}: {rows:string[]}) {
 		</thead>
 	);
 }
+
+export default React.memo(TableThead);

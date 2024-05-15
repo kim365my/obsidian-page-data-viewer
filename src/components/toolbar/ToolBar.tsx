@@ -7,8 +7,9 @@ import Search from "./Search";
 import Filter from "./Filter";
 import FilterList from "./FilterList";
 import SortBtn from "./SortBtn";
+import React from "react";
 
-export default function ToolBar({input}: {input: pageData | csvData}) {
+function ToolBar({input}: {input: pageData | csvData}) {
 	return (
 		<>
 			{input.header && <Header header={input.header} />}
@@ -27,3 +28,5 @@ export default function ToolBar({input}: {input: pageData | csvData}) {
 		</>
 	);
 }
+
+export default React.memo(ToolBar);

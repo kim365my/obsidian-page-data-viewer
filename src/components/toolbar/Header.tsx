@@ -1,5 +1,6 @@
+import React from "react";
 
-export default function Header({ header }: {
+function Header({ header }: {
 	header: string
 }) {
 	return (
@@ -8,3 +9,5 @@ export default function Header({ header }: {
 		</h2>
 	);
 }
+
+export default React.memo(Header);

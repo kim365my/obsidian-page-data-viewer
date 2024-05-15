@@ -1,7 +1,8 @@
 import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
+import React from "react";
 
-export default function FilterList({ filter }: { filter: filter[] }) {
+function FilterList({ filter }: { filter: filter[] }) {
 	const { selectFilterValue, deleteFilter } = usePagesData();
 	return (
 		<div className="filter-showing-box">
@@ -27,3 +28,5 @@ export default function FilterList({ filter }: { filter: filter[] }) {
 		</div>
 	);
 }
+
+export default React.memo(FilterList);

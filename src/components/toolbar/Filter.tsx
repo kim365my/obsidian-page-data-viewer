@@ -1,10 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { MenuContainer } from "./MenuContainer";
 import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 
 
-export default function Filter({filter}: {filter: filter[] | string[]}) {
+function Filter({filter}: {filter: filter[] | string[]}) {
 	const { selectFilterValue, handleFilter } = usePagesData();
 	const [visible, setVisible] = useState(false);
 
@@ -40,3 +40,5 @@ export default function Filter({filter}: {filter: filter[] | string[]}) {
 		</div>
 	);
 }
+
+export default React.memo(Filter);

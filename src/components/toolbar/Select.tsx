@@ -1,6 +1,7 @@
 import { usePagesData } from "context/PagesDataContext";
+import React from "react";
 
-export default function Select() {
+function Select() {
 	const { viewListNum, setViewListNum, selectedArr } = usePagesData();
 	return (
 		<select
@@ -13,3 +14,5 @@ export default function Select() {
 		</select>
 	);
 }
+
+export default React.memo(Select);

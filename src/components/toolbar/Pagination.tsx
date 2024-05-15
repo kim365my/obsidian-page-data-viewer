@@ -1,7 +1,8 @@
 import { usePagesData } from "context/PagesDataContext";
 import { usePagination } from "../../hooks/usePagination";
+import React from "react";
 
-export default function Pagination() {
+function Pagination() {
 	const { currentPageNum, fullPaginationNum, setCurrentPageNum, viewBtnNum } = usePagesData();
 	const { pageNumbers, prev, next, paginate, startBtn, endBtn } = usePagination(
 		setCurrentPageNum,
@@ -43,3 +44,5 @@ export default function Pagination() {
 		</div>
 	);
 }
+
+export default React.memo(Pagination);
