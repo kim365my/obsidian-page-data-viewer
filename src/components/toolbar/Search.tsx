@@ -1,7 +1,6 @@
 import { usePagesData } from "context/PagesDataContext";
-import React from "react";
 
-function Search() {
+export default function Search() {
 	const { searchValue, handleSearch, handleSearchInit } = usePagesData();
 	return (
 		<div className="search-input-container">
@@ -12,11 +11,7 @@ function Search() {
 				spellCheck={false}
 				placeholder="입력하여 검색 시작..."
 				value={searchValue}
-				onChange={(e) => {
-					setInterval(() => {
-						handleSearch(e.target.value.toLowerCase().trim());
-					}, 1000)
-				}}
+				onChange={(e) => handleSearch(e.target.value.toLowerCase().trim())}
 			/>
 			<div
 				className="search-input-clear-button"
@@ -25,4 +20,3 @@ function Search() {
 		</div>
 	);
 }
-export default React.memo(Search);

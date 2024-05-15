@@ -1,4 +1,4 @@
-import { DataviewFile } from 'interface/DataviewFile';
+import { DataviewFile, Literal } from 'interface/DataviewFile';
 import { filter } from "interface/pageData";
 
 export function filterPages(page: DataviewFile, selectFilter: filter): boolean {
@@ -6,7 +6,7 @@ export function filterPages(page: DataviewFile, selectFilter: filter): boolean {
 	// target이 프로퍼티인 경우 target은 key, target_content는 value인 형태
 	const targetValue = selectFilter.target_content ? String(selectFilter.target_content).toLowerCase() : "";
 	// filter type에 따라서 구분
-	const isIncludeTarget = selectFilter.target_isInclude?.includes("true") || false;
+	const isIncludeTarget = selectFilter.target_isInclude == "true" || false;
 
 	switch (selectFilter.type) {
 		case "tags": {
@@ -58,7 +58,7 @@ export function filterPages(page: DataviewFile, selectFilter: filter): boolean {
 		case "file.outlinks": {
 			const type = selectFilter.type.replace("file.", "").trim();
 			const fileType = page.file[type].values;
-			return (isIncludeTarget) ? fileType.length !== 0 : fileType.some((value) => String(value.path).toLowerCase().includes(target));
+			return (isIncludeTarget) ? fileType.length !== 0 : fileType.some((value: Literal) => String(value.path).toLowerCase().includes(target));
 		}
 		default: {
 			console.log("pageDataRenderer.js: 작성하신 필터 타입은 지원하지 않습니다.");

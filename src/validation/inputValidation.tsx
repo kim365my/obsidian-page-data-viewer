@@ -39,7 +39,14 @@ export default function inputValidation(source: string): pageData {
 	const filter: filter[] = [{ label: "모두보기" }];
 	if (input.sort) sortList.push(input.sort);
 	if (input.filter) filter.push(...input.filter);
-	const filterDefault = input.filterDefault ? input.filterDefault : [];
+	const filterDefault: number[] = [];
+	const inputFilterDefault = input.filterDefault;
+	filter.forEach((item, index: number) => {
+		// 기본적으로 사용하는 필터 추출
+		if (inputFilterDefault && inputFilterDefault.some((b) => b === item.label)) {
+			filterDefault.push(index);
+		}
+	})
 	const defaultSelectedArr = [5, 10, 20, 30, 40, 50];
 	if (
 		input.selectedValue &&

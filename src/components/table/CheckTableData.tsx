@@ -4,9 +4,11 @@ import { CheckRawList } from "./CheckRawList";
 import { isImageEmbed } from "./CheckRawList";
 import { Markdown } from "./CheckRawList";
 import getDataviewAPI from 'API/Dataview';
+import React from 'react';
 
+export default React.memo(CheckTableData);
 
-export default function CheckTableData({
+function CheckTableData({
 	page,
 	row,
 	type
@@ -51,7 +53,7 @@ export default function CheckTableData({
 	return <CheckRawList value={value} />;
 }
 
-export function PageFileRender({page, fileType, pageData} : {
+function PageFileRender({page, fileType, pageData} : {
 	page: DataviewFile
 	fileType: string
 	pageData: Literal
@@ -67,7 +69,7 @@ export function PageFileRender({page, fileType, pageData} : {
 
                 return (
 					<span>
-						<progress value="{value}" max="100"></progress>&nbsp;
+						<progress value={value} max="100"></progress>&nbsp;
 						<span>{value}%</span>
 					</span>
 				);
@@ -80,7 +82,7 @@ export function PageFileRender({page, fileType, pageData} : {
 			return <Markdown content={pageData} />
     }
 }
-export function pageCoverUrl(page: DataviewFile) {
+function pageCoverUrl(page: DataviewFile) {
 	let src = "";
 	
 	switch (typeof page.cover_url) {

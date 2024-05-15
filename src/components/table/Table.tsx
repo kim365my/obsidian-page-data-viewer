@@ -1,9 +1,8 @@
 import { DataviewFile } from "interface/DataviewFile";
 import CheckTableData from "./CheckTableData";
-import TableThead from "./TableThead";
-import { useTransition } from "react";
+import React from "react";
 
-export default function Table({
+function Table({
 	pages,
 	rows,
 	type,
@@ -12,13 +11,36 @@ export default function Table({
 	rows: string[];
 	type?: "csv";
 }) {
-
-
 	return (
 		<>
 			<table className="dataview table-view-table">
-				<TableThead rows={rows} />
-				<Tbody pages={pages} rows={rows} type={type} />
+				<thead className="table-view-thead">
+					<tr className="table-view-tr-header">
+						{rows.map((row: string, index: number) => (
+							<th
+								className="table-view-th"
+								key={"tableRow" + index}
+							>
+								<span>{row}</span>
+							</th>
+						))}
+					</tr>
+				</thead>
+				<tbody className="table-view-tbody">
+					{pages.map((page, index: number) => (
+						<tr key={"tr" + index}>
+							{rows.map((row, index: number) => (
+								<td key={"td" + index}>
+									<CheckTableData
+										page={page}
+										row={row}
+										type={type}
+									/>
+								</td>
+							))}
+						</tr>
+					))}
+				</tbody>
 			</table>
 			{pages.length === 0 && (
 				<div className="dataview dataview-error-box">
@@ -30,27 +52,4 @@ export default function Table({
 		</>
 	);
 }
-
-function Tbody({
-	pages,
-	rows,
-	type,
-}: {
-	pages: DataviewFile[];
-	rows: string[];
-	type?: "csv";
-}) {
-	return (
-		<tbody className="table-view-tbody">
-			{pages.map((page, index: number) => (
-				<tr key={"tr" + index}>
-					{rows.map((row, index: number) => (
-						<td key={"td" + index}>
-							<CheckTableData page={page} row={row} type={type} />
-						</td>
-					))}
-				</tr>
-			))}
-		</tbody>
-	);
-}
+export default React.memo(Table);

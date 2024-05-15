@@ -3,7 +3,7 @@ import { MenuContainer } from "./MenuContainer";
 import { sort } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 
-function SortBtn({sort}: {sort: sort[] | string[]}) {
+export default function SortBtn({sort}: {sort: sort[] | string[]}) {
 	const { selectSortNum, handleSort } = usePagesData();
 	const [visible, setVisible] = useState(false);
 	
@@ -42,5 +42,3 @@ function SortBtn({sort}: {sort: sort[] | string[]}) {
 		</div>
 	);
 }
-
-export default React.memo(SortBtn);

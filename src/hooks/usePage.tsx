@@ -29,7 +29,6 @@ export function usePage(pages:DataviewFile[], input:pageData): PagesDataContextT
 	const handleSearch = (search: string) => {
 		setSearchValue(search);
 		setRendererPages(pagesSearching(pages, search));
-
 	}
 	const handleSearchInit = () => {
 		setSearchValue("");

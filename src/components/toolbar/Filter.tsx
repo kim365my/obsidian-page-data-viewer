@@ -4,7 +4,7 @@ import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 
 
-function Filter({filter}: {filter: filter[] | string[]}) {
+export default function Filter({filter}: {filter: filter[] | string[]}) {
 	const { selectFilterValue, handleFilter } = usePagesData();
 	const [visible, setVisible] = useState(false);
 
@@ -41,4 +41,3 @@ function Filter({filter}: {filter: filter[] | string[]}) {
 	);
 }
 
-export default React.memo(Filter);
