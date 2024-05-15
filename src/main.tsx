@@ -9,20 +9,20 @@ export default class MyPlugin extends Plugin {
 	root: Root | null = null;
 
 	async onload() {
-
+		
 		const metadataChangeEvent = (handle: () => void) => {
 			this.registerEvent(this.app.metadataCache.on("dataview:metadata-change", handle));
 		}
-
-		this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {
-			this.root = createRoot(el);
-			this.root.render(
-				<ErrorBoundary FallbackComponent={ErrorPage}>
-					<ReactView source={source} metadataChangeEvent={metadataChangeEvent}></ReactView>
-				</ErrorBoundary>
-			);
-		}
-		);
+		this.registerEvent(this.app.metadataCache.on("dataview:index-ready", () => {
+			this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {
+				this.root = createRoot(el);
+				this.root.render(
+					<ErrorBoundary FallbackComponent={ErrorPage}>
+						<ReactView source={source} metadataChangeEvent={metadataChangeEvent}></ReactView>
+					</ErrorBoundary>
+				);
+			});
+		}));
 
 		this.registerMarkdownCodeBlockProcessor("page-table-csv", (source, el, ctx) => {
 				this.root = createRoot(el); 

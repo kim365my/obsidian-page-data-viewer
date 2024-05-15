@@ -2,10 +2,11 @@ import Table from "components/table/Table";
 import { PagesDataContext } from "context/PagesDataContext";
 import { usePage } from "hooks/usePage";
 import inputValidation from "validation/inputValidation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
+import { DataviewFile } from "interface/DataviewFile";
 
 export default function ReactView({
 	source,
@@ -19,28 +20,30 @@ export default function ReactView({
 	const [isLoading, setIsLoading] = useState(true);
 	const [pages, setPages] = useState(dv.pages(input.pages));
 	const pageData = usePage(pages, input);
+
+	const innitPages = useCallback((data: DataviewFile[]) => {
+		// 검색
+		if (pageData.searchValue !== "") {
+			data = pageData.pagesSearching(data, pageData.searchValue);
+		}
+		// 필터링
+		if (
+			pageData.pagesFiltering &&
+			pageData.selectFilterValue &&
+			pageData.selectFilterValue?.length !== 0
+		) {
+			data = pageData?.pagesFiltering(data, pageData?.selectFilterValue);
+		}
+		pageData.setRendererPages(data);
+	}, []);
+
 	useEffect(() => {
+		innitPages(pages);
 		metadataChangeEvent(() => {
-			let data = dv.pages(input.pages);
+			const data = dv.pages(input.pages);
 			if (data.length !== 0) {
 				setPages(data);
-
-				// 검색
-				if (pageData.searchValue !== "") {
-					data = pageData.pagesSearching(data, pageData.searchValue);
-				}
-				// 필터링
-				if (
-					pageData.pagesFiltering &&
-					pageData.selectFilterValue &&
-					pageData.selectFilterValue?.length !== 0
-				) {
-					data = pageData?.pagesFiltering(
-						data,
-						pageData?.selectFilterValue
-					);
-				}
-				pageData.setRendererPages(data);
+				innitPages(data);
 			}
 		});
 		if (isLoading) {
@@ -50,14 +53,14 @@ export default function ReactView({
 
 	return (
 		<PagesDataContext.Provider value={pageData}>
-			{isLoading
-				? <Lading />
-				: 
-				<>				
+			{isLoading ? (
+				<Lading />
+			) : (
+				<>
 					<ToolBar input={input} />
-					<Table pages={pageData.pagesSlice()} rows={input.rows} />
+					<Table pages={pageData.pageSlice()} rows={input.rows} />
 				</>
-				}
+			)}
 		</PagesDataContext.Provider>
 	);
 }

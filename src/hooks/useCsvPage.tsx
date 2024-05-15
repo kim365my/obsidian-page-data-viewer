@@ -1,7 +1,7 @@
 import { DataviewFile } from 'interface/DataviewFile';
 import { PagesDataContextType } from 'interface/PagesDataContextType';
 import CsvData from 'interface/csvData';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDataContextType {
     const [rendererPages, setRendererPages] = useState(pages);
@@ -48,22 +48,19 @@ export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDa
 			pagesSorting(index);
 		}
 	}
-
-	// 페이지 슬라이스
-	const pagesSlice = () => {
-		const renderer = pagesSorting(selectSortNum);
-		const slice = renderer?.slice(((currentPageNum -1) * viewListNum), ((currentPageNum -1) * viewListNum) + viewListNum);
-		return slice;
+	const pageSlice = () => {
+		const startNum = (currentPageNum -1) * viewListNum;
+		const endNum = ((currentPageNum -1) * viewListNum) + viewListNum
+		const data = rendererPages?.slice(startNum, endNum);
+		return data
 	}
 
-	// 페이지 초기화
-	const initPages = useCallback(() => {
-		setRendererPages(pages);
-	}, [])
-	// pages가 변하면 renderer에 적용
 	useEffect(() => {
-		initPages();
-	}, [initPages])
+		let data = pages;
+		// 정렬
+		data = pagesSorting(selectSortNum);
+		setRendererPages(data);
+	}, [pages])
 
-	return { rendererPages, setRendererPages, currentPageNum, setCurrentPageNum, pagesSlice, viewListNum, setViewListNum, viewBtnNum, fullPaginationNum, selectedArr, searchValue, setSearchValue, handleSearch, handleSearchInit, selectSortNum, setSelectSortNum, handleSort, pagesSearching, pagesSorting };
+	return { rendererPages, setRendererPages, currentPageNum, setCurrentPageNum, viewListNum, setViewListNum, viewBtnNum, fullPaginationNum, selectedArr, searchValue, setSearchValue, handleSearch, handleSearchInit, selectSortNum, setSelectSortNum, handleSort, pagesSearching, pagesSorting, pageSlice };
 }

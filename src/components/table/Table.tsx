@@ -11,6 +11,7 @@ function Table({
 	rows: string[];
 	type?: "csv";
 }) {
+
 	return (
 		<>
 			<table className="dataview table-view-table">

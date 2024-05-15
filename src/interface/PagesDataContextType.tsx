@@ -5,7 +5,6 @@ export interface PagesDataContextType {
 	setRendererPages: React.Dispatch<React.SetStateAction<DataviewFile[]>>
 	currentPageNum: number,
 	setCurrentPageNum: React.Dispatch<React.SetStateAction<number>>,
-	pagesSlice: () => DataviewFile[],
 	viewListNum: number,
 	setViewListNum:  React.Dispatch<React.SetStateAction<number>>,
 	viewBtnNum: number,
@@ -25,5 +24,6 @@ export interface PagesDataContextType {
 	pagesSearching :(filetingPages: DataviewFile[], search: string) => DataviewFile[],
 	pagesFiltering ?: (filetingPages: DataviewFile[], selectList: number[]) => DataviewFile[],
 	pagesSorting: (index: number) => void,
-	header?: string
+	pageSlice: () => DataviewFile[]
+	initPages?: (data: DataviewFile[]) => void
 }

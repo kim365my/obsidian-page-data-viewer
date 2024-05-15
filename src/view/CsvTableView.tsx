@@ -38,7 +38,7 @@ export default function CsvTableView({ source }: { source: string }) {
 				:
 					<>
 						<ToolBar input={input} />
-						<Table pages={pageData.pagesSlice()} rows={input.rows} type="csv" />
+						<Table pages={pageData.pageSlice()} rows={input.rows} type="csv" />
 					</>
 			}		
 		</PagesDataContext.Provider>
