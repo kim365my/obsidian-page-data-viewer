@@ -1,87 +1,48 @@
-import { DataviewFile, Literal } from 'interface/DataviewFile'
+import React from 'react';
+import { DataviewFile} from 'interface/DataviewFile'
 import { getFileRealLink } from 'Utils/getFileRealLink';
 import { CheckRawList } from "./CheckRawList";
 import { isImageEmbed } from "./CheckRawList";
-import { Markdown } from "./CheckRawList";
-import getDataviewAPI from 'API/Dataview';
-import React from 'react';
 
 export default React.memo(CheckTableData);
 
 function CheckTableData({
 	page,
 	row,
-	type
+	sourcePath,
 }: {
 	page: DataviewFile;
 	row: string;
-	type?: "csv"
+	sourcePath: string;
 }) {
-	const dv = getDataviewAPI();
 	const value = page[row];
 
-	if (type) {
-		const file = String(value);
-		if (file.contains("\\,")) {
-			// 다중 정보가 저장되어 있는 경우
-			const content = file.split("\\,");
-			return (
-				<>
-					{content.map((data, index: number) => (
-						<CheckRawList
-							key={"data" + data + index}
-							value={dv.parse(data)}
-						/>
-					))}
-				</>
-			);
-		}
-	} else {
-		if (row.contains("file.")) {
-			const fileType = row.replace("file.", "");
-			return (
-				<PageFileRender
-					page={page}
-					fileType={fileType}
-					pageData={value}
-				/>
-			);
-		} else if (row === "cover_url") {
-			return pageCoverUrl(page);
-		}
-	}
-	return <CheckRawList value={value} />;
-}
-
-function PageFileRender({page, fileType, pageData} : {
-	page: DataviewFile
-	fileType: string
-	pageData: Literal
-}) {
-
-    switch (fileType) {
-        case "tasks":
-            // eslint-disable-next-line no-case-declarations
-            const tasks = page.file.tasks;
-            if (tasks.length !== 0) {
-                const completedTasks = tasks.filter(t => t.completed);
-                const value = Math.round((completedTasks.length / tasks.length || 0) * 100);
-
-                return (
+	if (row.contains("file.")) {
+		const fileType = row.replace("file.", "");
+		if (fileType === "tasks") {
+			const tasks = page.file.tasks;
+			if (tasks.length !== 0) {
+				const completedTasks = tasks.filter(t => t.completed);
+				const progress = Math.round((completedTasks.length / tasks.length || 0) * 100);
+	
+				return (
 					<span>
-						<progress value={value} max="100"></progress>&nbsp;
-						<span>{value}%</span>
+						<progress value={progress} max="100"></progress>&nbsp;
+						<span>{progress}%</span>
 					</span>
 				);
-            } else {
+			} else {
 				return <span>No tasks</span>
 			}
-        case "link":
-            return <CheckRawList value={page.file.link} />
-        default:
-			return <Markdown content={pageData} />
-    }
+		}
+		return <CheckRawList value={page.file[fileType]} sourcePath={sourcePath} inline={false} />
+	} else if (row === "cover_url") {
+		return pageCoverUrl(page);
+	}
+
+	return <CheckRawList value={value} sourcePath={sourcePath} inline={false} />;
 }
+
 function pageCoverUrl(page: DataviewFile) {
 	let src = "";
 	
@@ -98,7 +59,11 @@ function pageCoverUrl(page: DataviewFile) {
 			// page가 null인 경우, 문서 내부의 첫번째 이미지에서 불러오기
 			for (const item of page.file.outlinks.values) {
 				if (isImageEmbed(item)) {
-					src = getFileRealLink(item.path);
+					if (String(item.path).startsWith("http")) {
+						src = item.path
+					} else {
+						src = getFileRealLink(item.path);
+					}
 					break;
 				}
 			}

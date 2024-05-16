@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { filterPages } from "Utils/filterPages";
 import { DataviewFile } from 'interface/DataviewFile';
 import { PagesDataContextType } from "interface/PagesDataContextType";
 import pageData from "interface/pageData";
+import { DataArray } from "obsidian-dataview";
 
-export function usePage(pages:DataviewFile[], input:pageData): PagesDataContextType {
+export function usePage(pages:DataArray<DataviewFile>, input:pageData): PagesDataContextType {
 	const [rendererPages, setRendererPages] = useState(pages);
 	// 현재 페이지
 	const [currentPageNum, setCurrentPageNum] = useState(1);
@@ -18,11 +19,11 @@ export function usePage(pages:DataviewFile[], input:pageData): PagesDataContextT
 
 	// 검색
 	const [searchValue, setSearchValue] = useState("");
-	const pagesSearching = (filetingPages: DataviewFile[], search: string) => {
+	const pagesSearching = (filetingPages: DataArray<DataviewFile>, search: string) => {
 		if (search === "") {
 			return filetingPages;
 		} else {
-			const searchPages = filetingPages?.filter((page) =>
+			const searchPages = filetingPages?.filter((page: DataviewFile) =>
 				page.file.name.toLowerCase().includes(search)
 			);
 			return searchPages;
@@ -41,10 +42,10 @@ export function usePage(pages:DataviewFile[], input:pageData): PagesDataContextT
 		input.filterDefault
 	);
 	const pagesFiltering = (
-		filetingPages: DataviewFile[],
+		filetingPages: DataArray<DataviewFile>,
 		selectList: number[]
 	) => {
-		const renderer = filetingPages.filter((page) => {
+		const renderer = filetingPages.filter((page: DataviewFile) => {
 			let result = true;
 			selectList.forEach((item) => {
 				result = result && filterPages(page, input.filter[item]);
@@ -101,15 +102,15 @@ export function usePage(pages:DataviewFile[], input:pageData): PagesDataContextT
 				selectSort.type.indexOf("file.") + 5,
 				selectSort.type.length
 			);
-			renderer = rendererPages?.sort(
-				(b) => b.file[fileType],
-				selectSort.sort
-			);
+			renderer = rendererPages.sort((b: DataviewFile) => b.file[fileType],selectSort.sort);
 		} else {
-			renderer = rendererPages?.sort(
-				(b) => b[selectSort.type],
-				selectSort.sort
-			);
+			if (selectSort.type === "created") {
+				const isCreated = rendererPages[0]["created"]
+				if (isCreated === null) {
+					return rendererPages.sort((b: DataviewFile) => b.file.ctime, selectSort.sort);
+				}
+			}
+			renderer = rendererPages.sort((b: DataviewFile) => b[selectSort.type],selectSort.sort);
 		}
 		return renderer;
 	};

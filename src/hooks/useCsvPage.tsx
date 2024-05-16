@@ -1,9 +1,10 @@
 import { DataviewFile } from 'interface/DataviewFile';
 import { PagesDataContextType } from 'interface/PagesDataContextType';
 import CsvData from 'interface/csvData';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { DataArray } from "obsidian-dataview";
 
-export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDataContextType {
+export default function useCsvPage(pages:DataArray<DataviewFile>, input:CsvData): PagesDataContextType {
     const [rendererPages, setRendererPages] = useState(pages);
 	// 현재 페이지
 	const [currentPageNum, setCurrentPageNum] = useState(1);
@@ -17,10 +18,10 @@ export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDa
 
     // 검색
 	const [searchValue, setSearchValue] = useState("");
-	const pagesSearching = (filetingPages: DataviewFile[], search: string) => {
+	const pagesSearching = (filetingPages: DataArray<DataviewFile>, search: string) => {
 		let searchPages = filetingPages;
 		if (search !== "") {
-			searchPages = searchPages?.filter((page) => page?.title?.toLowerCase().includes(search));
+			searchPages = searchPages?.filter((page: DataviewFile) => page?.title?.toLowerCase().includes(search));
 		}
 		return searchPages;
 	}
@@ -38,7 +39,7 @@ export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDa
 	const pagesSorting = (index: number) => {
 		const renderer = rendererPages;
 		if (index !== selectSortNum) {
-			renderer.values  = renderer.values.reverse();
+			renderer.values = renderer.values.reverse();
 		}
 		return renderer;
 	}
@@ -49,18 +50,12 @@ export default function useCsvPage(pages:DataviewFile[], input:CsvData): PagesDa
 		}
 	}
 	const pageSlice = () => {
+		// 정렬
 		const startNum = (currentPageNum -1) * viewListNum;
 		const endNum = ((currentPageNum -1) * viewListNum) + viewListNum
-		const data = rendererPages?.slice(startNum, endNum);
+		const data = rendererPages.slice(startNum, endNum);
 		return data
 	}
-
-	useEffect(() => {
-		let data = pages;
-		// 정렬
-		data = pagesSorting(selectSortNum);
-		setRendererPages(data);
-	}, [pages])
 
 	return { rendererPages, setRendererPages, currentPageNum, setCurrentPageNum, viewListNum, setViewListNum, viewBtnNum, fullPaginationNum, selectedArr, searchValue, setSearchValue, handleSearch, handleSearchInit, selectSortNum, setSelectSortNum, handleSort, pagesSearching, pagesSorting, pageSlice };
 }

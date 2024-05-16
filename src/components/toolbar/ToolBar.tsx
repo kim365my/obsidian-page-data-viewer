@@ -7,8 +7,10 @@ import Search from "./Search";
 import Filter from "./Filter";
 import FilterList from "./FilterList";
 import SortBtn from "./SortBtn";
+import { Platform } from "obsidian";
 
 export default function ToolBar({input}: {input: pageData | csvData}) {
+	const isMobile = Platform.isPhone;
 	return (
 		<>
 			{input.header && <Header header={input.header} />}
@@ -19,8 +21,10 @@ export default function ToolBar({input}: {input: pageData | csvData}) {
 				</div>
 				<div className="toolbar-right">
 					<Search />
-					{input.filter && <Filter filter={input.filter} />}
-					<SortBtn sort={input.sort} />
+					{input.filter && input.filter.length !== 0 && (
+						<Filter filter={input.filter} isMobile={isMobile} />
+					)}
+					<SortBtn sort={input.sort} isMobile={isMobile} />
 				</div>
 			</div>
 			{input.filter && <FilterList filter={input.filter} />}

@@ -1,36 +1,45 @@
 import getDataviewAPI from "API/Dataview";
+import { Literal } from "obsidian-dataview";
 import { getFileRealLink } from "Utils/getFileRealLink";
-import { Link, Literal } from "interface/DataviewFile";
-import { AUDIO_EXTENSIONS, IMAGE_EXTENSIONS } from "interface/EXTENSIONS";
+import { Link } from "interface/DataviewFile";
 import { Fragment } from "react/jsx-runtime";
 import React, { useEffect, useRef } from "react";
-import { DateTime, Duration } from "luxon";
-import { marked } from "marked";
+import { MarkdownRenderer } from "obsidian";
+import { usePlugin } from "context/PluginContext";
+import { renderMinimalDate, currentLocale, renderMinimalDuration } from "../../Utils/renderDate";
 
-export function RawMarkdown({ content, inline = true, cls }: {
+function RawMarkdown({ sourcePath, content, inline = true, cls }: {
     content: string;
+	sourcePath: string;
     inline?: boolean;
     cls?: string;
 }) {
     const container = useRef<HTMLElement | null>(null);
+	const plugin = usePlugin();
 
     useEffect(() => {
         if (!container.current) return;
         container.current.innerHTML = "";
-        if (content) {
-            const html = (inline) ? marked.parseInline(content) : marked.parse(content);
-            if (typeof html === "string") {
-                container.current.innerHTML = html;
+
+		MarkdownRenderer.render(plugin.app, content, container.current, sourcePath, plugin).then(() => {
+			if (!container.current || !inline) return;
+
+            // Unwrap any created paragraph elements if we are inline.
+            let paragraph = container.current.querySelector("p");
+            while (paragraph) {
+                const children = paragraph.childNodes;
+                paragraph.replaceWith(...Array.from(children));
+                paragraph = container.current.querySelector("p");
             }
-        }
-    }, [content]);
+		})
+    }, [content, sourcePath, container.current]);
 
     return <span ref={container} className={cls}></span>;
 }
 
 export const Markdown = React.memo(RawMarkdown);
 
-export function RawEmbedHtml({ element }: { element: HTMLElement; }) {
+function RawEmbedHtml({ element }: { element: HTMLElement; }) {
     const container = useRef<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -44,59 +53,27 @@ export function RawEmbedHtml({ element }: { element: HTMLElement; }) {
 export const EmbedHtml = React.memo(RawEmbedHtml);
 
 
-export function CheckForRaw({ value }: { value: Literal; }) {
+function CheckForRaw({
+	value,
+	inline = true,
+	sourcePath,
+}: {
+	value: Literal;
+	inline: boolean;
+	sourcePath: string;
+}) {
 	const dv = getDataviewAPI();
 
 	if (dv.value.isNull(value) || value === undefined) {
 		return <>{dv.settings.renderNullAs}</>;
 	} else if (dv.value.isString(value) || typeof value === "string") {
-		const imgRegex = new RegExp(/!\[\[(.*?)\]\]/g);
-		if (imgRegex.test(value)) {
-			// 이미지 파일
-			const extension = value.substring(
-				value.indexOf("."),
-				value.indexOf("]]")
-			);
-			if (IMAGE_EXTENSIONS.has(extension)) {
-				const imgStartIndex = value.indexOf("![[");
-				const imgEndIndex = value.indexOf(
-					value.includes("|") ? "|" : "]]"
-				);
-				const imgText = value.substring(imgStartIndex + 3, imgEndIndex);
-				const fileRealLink = getFileRealLink(imgText);
-				value = value.replace(imgRegex, `<img src=${fileRealLink}/>`);
-			}
-		}
-
-		const linkRegex = new RegExp(/\[\[(.*)(\|.*)?\]\]/g);
-		if (linkRegex.test(value)) {
-			const linkStartIndex = value.indexOf("[[");
-			const linkEndIndex = value.indexOf(
-				value.includes("|") ? "|" : "]]"
-			);
-			const linkText = value.substring(linkStartIndex + 2, linkEndIndex);
-
-			value = value.replace(
-				linkRegex,
-				`<a data-tooltip-position="top" aria-label="${linkText}" data-href="${linkText}" href="${linkText}" class="internal-link" target="_blank" rel="noopener">${linkText}</a>`
-			);
-		}
-
-		const urlLinkRegex = new RegExp(/\[(.*?)\]\((.*?)\)/g);
-		if (urlLinkRegex.test(value)) {
-			value = value.replace(
-				urlLinkRegex,
-				`<a data-tooltip-position="top" aria-label="$2" data-href="$2" href="$2" class="external-link" target="_blank" rel="noopener">$1</a>`
-			);
-		}
-
-		return <Markdown content={value} />;
+		return <Markdown content={value} sourcePath={sourcePath} />;
 	} else if (dv.value.isNumber(value) || dv.value.isBoolean(value)) {
 		return <>{"" + value}</>;
 	} else if (dv.value.isDate(value)) {
-        return <>{renderMinimalDate(value, dv.settings, currentLocale())}</>
-    } else if (dv.value.isDuration(value)) {
-       return <>{renderMinimalDuration(value)}</>
+		return <>{renderMinimalDate(value, dv.settings, currentLocale())}</>;
+	} else if (dv.value.isDuration(value)) {
+		return <>{renderMinimalDuration(value)}</>;
 	} else if (dv.value.isLink(value)) {
 		if (isImageEmbed(value)) {
 			const fileRealLink = getFileRealLink(value.path);
@@ -105,129 +82,118 @@ export function CheckForRaw({ value }: { value: Literal; }) {
 					<img src={fileRealLink}></img>
 				</span>
 			);
-		} else if (isAudioEmbed(value)) {
-			const fileRealLink = getFileRealLink(value.path);
+		}
+		return <Markdown content={value.markdown()} sourcePath={sourcePath} />;
+	} else if (dv.value.isHtml(value)) {
+		return <EmbedHtml element={value} />;
+	} else if (dv.value.isWidget(value)) {
+		if (dv.widgets.isListPair(value)) {
 			return (
-				<span className="internal-embed media-embed audio-embed is-loaded">
-					<audio
-						controls={true}
-						controlsList="nodownload"
-						src={fileRealLink}
-					></audio>
-				</span>
+				<Fragment>
+					<CheckRawList value={value.key} sourcePath={sourcePath} inline={inline} />:{" "}
+					<CheckRawList value={value.value} sourcePath={sourcePath} inline={inline} />
+				</Fragment>
 			);
-		} else if (value.type === "file") {
+		} else if (dv.widgets.isExternalLink(value)) {
 			return (
 				<a
-					data-tooltip-position="top"
-					aria-label={value.fileName()}
-					data-href={value.fileName()}
-					href={value.path}
-					className="internal-link"
-					target="_blank"
+					href={value.url}
 					rel="noopener"
+					target="_blank"
+					className="external-link"
 				>
-					{value.fileName()}
+					{value.display ?? value.url}
 				</a>
 			);
+		} else {
+			return <b>&lt;unknown widget '{value.$widget}'&gt;</b>;
 		}
-        return <Markdown content={value.markdown()} />;
-    } else if (dv.value.isHtml(value)) {
-		return <EmbedHtml element={value} />;
-    } else if (dv.value.isWidget(value)) {
-        if (dv.widgets.isListPair(value)) {
+	} else if (dv.value.isFunction(value)) {
+        return <Fragment>&lt;function&gt;</Fragment>;
+	} else if (dv.value.isArray(value)) {
+		if (!inline) {
             return (
-                <Fragment>
-                    <CheckRawList value={value.key} />:{" "}
-                    <CheckRawList value={value.value} />
-                </Fragment>
-            );
-        } else if (dv.widgets.isExternalLink(value)) {
-            return (
-                <a href={value.url} rel="noopener" target="_blank" className="external-link">
-                    {value.display ?? value.url}
-                </a>
+                <ul className={"dataview dataview-ul dataview-result-list-ul"}>
+                    {value.map((subValue: Literal, index: number) => (
+                        <li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
+                            <CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
+                        </li>
+                    ))}
+                </ul>
             );
         } else {
-            return <b>&lt;unknown widget '{value.$widget}'&gt;</b>;
-        }
-	} else if (dv.value.isArray(value)) {
-        if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
+			if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
 
-        return (
-            <span className="dataview dataview-result-list-span">
-                {value.map((subValue: Literal, index: number) => (
-                    <Fragment key={"subValue" + String(subValue) + index}>
-                        {index === 0 ? "" : ", "}
-                        <CheckRawList value={subValue} />
-                    </Fragment>
-                ))}
-            </span>
-        );
+			return (
+				<span className="dataview dataview-result-list-span">
+					{value.map((subValue: Literal, index: number) => (
+						<Fragment key={"subValue" + String(subValue) + index}>
+							{index === 0 ? "" : ", "}
+							<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
+						</Fragment>
+					))}
+				</span>
+			);
+		}
 	} else if (dv.value.isObject(value)) {
 		if (value?.constructor?.name && value?.constructor?.name != "Object") {
 			return <>&lt;{value.constructor.name}&gt;</>;
 		}
-		return (
-			<span className="dataview dataview-result-object-span">
-				{Object.entries(value).map(([key, value], index) => (
-					<Fragment key={"dataview" + String(key) + index}>
-						{index == 0 ? "" : ", "}
-						{key}: <CheckRawList value={value} />
-					</Fragment>
-				))}
-			</span>
-		);
+		if (!inline) {
+            return (
+                <ul className="dataview dataview-ul dataview-result-object-ul">
+                    {Object.entries(value).map(([key, value], index) => (
+                        <li className="dataview dataview-li dataview-result-object-li" key={"key" + key + index} >
+                            {key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
+                        </li>
+                    ))}
+                </ul>
+            );
+        } else {
+			if (Object.keys(value).length == 0) return <Fragment>&lt;Empty Object&gt;</Fragment>;
+			return (
+				<span className="dataview dataview-result-object-span">
+					{Object.entries(value).map(([key, value], index) => (
+						<Fragment key={"dataview" + String(key) + index}>
+							{index == 0 ? "" : ", "}
+							{key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
+						</Fragment>
+					))}
+				</span>
+			);
+		}
 	}
 	return <>{dv.settings.renderNullAs}</>;
 }
 
 export const CheckRawList = React.memo(CheckForRaw);
 
+const IMAGE_EXTENSIONS = Object.freeze(
+	new Set([
+		".tif",
+		".tiff",
+		".gif",
+		".png",
+		".apng",
+		".avif",
+		".jpg",
+		".jpeg",
+		".jfif",
+		".pjepg",
+		".pjp",
+		".svg",
+		".webp",
+		".bmp",
+		".ico",
+		".cur",
+	])
+);
+
 export function isImageEmbed(link: Link): boolean {
-    if (!link.path.contains(".")) return false;
+	if (!link.path.contains(".")) return false;
 
-    const extension = link.path.substring(link.path.lastIndexOf("."));
-    return link.type == "file" && link.embed && IMAGE_EXTENSIONS.has(extension);
+	const extension = link.path.substring(link.path.lastIndexOf("."));
+	return link.type == "file" && link.embed && IMAGE_EXTENSIONS.has(extension);
 }
 
-export function isAudioEmbed(link: Link): boolean {
-    if (!link.path.contains(".")) return false;
 
-    const extension = link.path.substring(link.path.lastIndexOf("."));
-    return link.type == "file" && link.embed && AUDIO_EXTENSIONS.has(extension);
-}
-/** Normalize a duration to all of the proper units. */
-export function normalizeDuration(dur: Duration) {
-    if (dur === undefined || dur === null) return dur;
-
-    return dur.shiftToAll().normalize();
-}
-
-/** Render a DateTime in a minimal format to save space. */
-export function renderMinimalDate(time: DateTime, setting: Literal, locale: string): string {
-    // If there is no relevant time specified, fall back to just rendering the date.
-    if (time.second == 0 && time.minute == 0 && time.hour == 0) {
-        return time.toLocal().toFormat(setting?.defaultDateFormat, { locale });
-    }
-
-    return time.toLocal().toFormat(setting?.defaultDateTimeFormat, { locale });
-}
-
-/** Render a duration in a minimal format to save space. */
-export function renderMinimalDuration(dur: Duration): string {
-    dur = normalizeDuration(dur);
-
-    // toHuman outputs zero quantities e.g. "0 seconds"
-    dur = Duration.fromObject(
-        Object.fromEntries(Object.entries(dur.toObject()).filter(([, quantity]) => quantity != 0))
-    );
-
-    return dur.toHuman();
-}
-
-/** Test-environment-friendly function which fetches the current system locale. */
-export function currentLocale(): string {
-    if (typeof window === "undefined") return "en-US";
-    return window.navigator.language;
-}

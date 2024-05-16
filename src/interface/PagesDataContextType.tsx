@@ -1,8 +1,9 @@
 import { DataviewFile } from "interface/DataviewFile";
+import { DataArray } from "obsidian-dataview";
 
 export interface PagesDataContextType {
-	rendererPages: DataviewFile[]
-	setRendererPages: React.Dispatch<React.SetStateAction<DataviewFile[]>>
+	rendererPages: DataArray<DataviewFile>
+	setRendererPages: React.Dispatch<React.SetStateAction<DataArray<DataviewFile>>>
 	currentPageNum: number,
 	setCurrentPageNum: React.Dispatch<React.SetStateAction<number>>,
 	viewListNum: number,
@@ -21,9 +22,9 @@ export interface PagesDataContextType {
 	selectSortNum: number,
 	setSelectSortNum: React.Dispatch<React.SetStateAction<number>>,
 	handleSort: (index: number) => void,
-	pagesSearching :(filetingPages: DataviewFile[], search: string) => DataviewFile[],
-	pagesFiltering ?: (filetingPages: DataviewFile[], selectList: number[]) => DataviewFile[],
+	pagesSearching :(filetingPages: DataArray<DataviewFile>, search: string) => DataArray<DataviewFile>,
+	pagesFiltering ?: (filetingPages: DataArray<DataviewFile>, selectList: number[]) => DataArray<DataviewFile>,
 	pagesSorting: (index: number) => void,
-	pageSlice: () => DataviewFile[]
-	initPages?: (data: DataviewFile[]) => void
+	pageSlice: () => DataArray<DataviewFile>
+	initPages?: (data: DataArray<DataviewFile>) => void
 }

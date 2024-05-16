@@ -1,6 +1,6 @@
 import { Pos } from 'obsidian';
-import { Literal } from 'obsidian-dataview';
-import { DateTime, Duration } from 'luxon';
+import { DateTime } from 'luxon';
+import { Literal } from "obsidian-dataview";
 
 export interface Link {
     path: string;
@@ -71,20 +71,3 @@ export interface File {
     tasks: Task[],
     [key: string]: Literal;
 }
-
-/** Shorthand for a mapping from keys to values. */
-export type DataObject = { [key: string]: Literal };
-/** The raw values that a literal can take on. */
-export type Literal =
-    | boolean
-    | number
-    | string
-    | DateTime
-    | Duration
-    | Link
-    | Array<Literal>
-    | DataObject
-    | Function
-    | null
-    | HTMLElement
-    | Widget;

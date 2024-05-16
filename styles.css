@@ -6,7 +6,23 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+/* loading spinner */
+.block-language-page-table .loading .loading_spinner,
+.block-language-page-table-csv .loading .loading_spinner {
+	margin: 0 auto;
+	width: 36px;
+	height: 36px;
+	border: 3px solid var(--ui1);
+	border-top: 3px solid var(--tx1);
+	border-radius: 50%;
+	animation: spin 2s linear infinite;
+}
+@keyframes spin {
+	0% {transform: rotate(0deg);}	
+	100% {transform: rotate(360deg);}	
+}
 
+/* toolbar */
 .toolbar {
     display: flex;
 	flex-wrap: wrap;
@@ -20,7 +36,12 @@ If your plugin does not need CSS, delete this file.
 }
 .toolbar-right {
     display: flex;
+	align-items: flex-end;
 	margin-left: auto;
+}
+.is-mobile .toolbar-right,
+.is-mobile .search-input-container {
+	width: 100% !important;
 }
 .toolbar .box {
 	position: relative;
@@ -66,6 +87,7 @@ If your plugin does not need CSS, delete this file.
 .filter-showing-box .filter-tip {
 	padding: 2px 0;
 	margin-right: 8px;
+	color: var(--icon-color);
 }
 .filter-showing-box .filter-item {
 	display: flex;
@@ -83,6 +105,7 @@ If your plugin does not need CSS, delete this file.
 	text-overflow: ellipsis;
 }
 
+/* table */
 .block-language-page-table-csv .external-link {
 	background: none;
 }
@@ -96,18 +119,4 @@ If your plugin does not need CSS, delete this file.
 .block-language-page-table .loading,
 .block-language-page-table-csv .loading {
 	text-align: center;
-}
-.block-language-page-table .loading .loading_spinner,
-.block-language-page-table-csv .loading .loading_spinner {
-	margin: 0 auto;
-	width: 36px;
-	height: 36px;
-	border: 3px solid var(--ui1);
-	border-top: 3px solid var(--tx1);
-	border-radius: 50%;
-	animation: spin 2s linear infinite;
-}
-@keyframes spin {
-	0% {transform: rotate(0deg);}	
-	100% {transform: rotate(360deg);}	
 }

@@ -7,12 +7,16 @@ import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
 import { DataviewFile } from "interface/DataviewFile";
+import { MarkdownPostProcessorContext } from "obsidian";
+import { DataArray } from "obsidian-dataview";
 
 export default function ReactView({
 	source,
+	ctx,
 	metadataChangeEvent,
 }: {
 	source: string;
+	ctx: MarkdownPostProcessorContext;
 	metadataChangeEvent: (handle: () => void) => void;
 }) {
 	const dv = getDataviewAPI();
@@ -21,7 +25,7 @@ export default function ReactView({
 	const [pages, setPages] = useState(dv.pages(input.pages));
 	const pageData = usePage(pages, input);
 
-	const innitPages = useCallback((data: DataviewFile[]) => {
+	const innitPages = useCallback((data: DataArray<DataviewFile>) => {
 		// 검색
 		if (pageData.searchValue !== "") {
 			data = pageData.pagesSearching(data, pageData.searchValue);
@@ -58,7 +62,13 @@ export default function ReactView({
 			) : (
 				<>
 					<ToolBar input={input} />
-					<Table pages={pageData.pageSlice()} rows={input.rows} />
+					<div className={input.cls}>
+						<Table
+							pages={pageData.pageSlice()}
+							rows={input.rows}
+							sourcePath={ctx.sourcePath}
+						/>
+					</div>
 				</>
 			)}
 		</PagesDataContext.Provider>
