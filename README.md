@@ -39,6 +39,8 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 
 - pages: dataview의 pages와 동일
 - rows: (선택) 표시될 row목록, 기본값 : file.link
+	- cover_url: 페이지 내의 이미지를 가져오거나 미리 property로 설정된 cover_url 이미지를 가져옴
+	- rTime_(file.cday나 created 등) : 상대적으로 시간을 표시해줌
 - header: (선택) 제목추가
 - selectedValue: (선택) 한번에 표시될 페이지 수, 기본값 : 10
 - filter : (선택) 테이블 필터링
