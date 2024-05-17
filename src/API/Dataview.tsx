@@ -9,3 +9,19 @@ export default function getDataviewAPI(): DataviewApi {
     const api = getAPI(this.app);
     if (api) return api;
 }
+
+declare module "obsidian" {	
+	interface MetadataCache {
+		on(name: "dataview:index-ready", callback: () => unknown, ctx?: unknown): EventRef;
+		on(
+			name: "dataview:metadata-change",
+			callback: (
+				...args:
+					| [op: "rename", file: TAbstractFile, oldPath: string]
+					| [op: "delete", file: TFile]
+					| [op: "update", file: TFile]
+			) => unknown,
+			ctx?: unknown
+		): EventRef;
+	}
+  }

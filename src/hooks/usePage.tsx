@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { filterPages } from "Utils/filterPages";
-import { DataviewFile } from 'interface/DataviewFile';
 import { PagesDataContextType } from "interface/PagesDataContextType";
 import pageData from "interface/pageData";
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
-export function usePage(pages:DataArray<DataviewFile>, input:pageData): PagesDataContextType {
+export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataContextType {
 	const [rendererPages, setRendererPages] = useState(pages);
 	// 현재 페이지
 	const [currentPageNum, setCurrentPageNum] = useState(1);
@@ -19,11 +18,11 @@ export function usePage(pages:DataArray<DataviewFile>, input:pageData): PagesDat
 
 	// 검색
 	const [searchValue, setSearchValue] = useState("");
-	const pagesSearching = (filetingPages: DataArray<DataviewFile>, search: string) => {
+	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
 		if (search === "") {
 			return filetingPages;
 		} else {
-			const searchPages = filetingPages?.filter((page: DataviewFile) =>
+			const searchPages = filetingPages?.filter((page: DataObject) =>
 				page.file.name.toLowerCase().includes(search)
 			);
 			return searchPages;
@@ -42,10 +41,10 @@ export function usePage(pages:DataArray<DataviewFile>, input:pageData): PagesDat
 		input.filterDefault
 	);
 	const pagesFiltering = (
-		filetingPages: DataArray<DataviewFile>,
+		filetingPages: DataArray<DataObject>,
 		selectList: number[]
 	) => {
-		const renderer = filetingPages.filter((page: DataviewFile) => {
+		const renderer = filetingPages.filter((page: DataObject) => {
 			let result = true;
 			selectList.forEach((item) => {
 				result = result && filterPages(page, input.filter[item]);
@@ -102,15 +101,15 @@ export function usePage(pages:DataArray<DataviewFile>, input:pageData): PagesDat
 				selectSort.type.indexOf("file.") + 5,
 				selectSort.type.length
 			);
-			renderer = rendererPages.sort((b: DataviewFile) => b.file[fileType],selectSort.sort);
+			renderer = rendererPages.sort((b: DataObject) => b.file[fileType],selectSort.sort);
 		} else {
-			if (selectSort.type === "created") {
-				const isCreated = rendererPages[0]["created"]
-				if (isCreated === null) {
-					return rendererPages.sort((b: DataviewFile) => b.file.ctime, selectSort.sort);
-				}
-			}
-			renderer = rendererPages.sort((b: DataviewFile) => b[selectSort.type],selectSort.sort);
+			// if (selectSort.type === "created") {
+			// 	const isCreated = rendererPages[0];
+			// 	if (isCreated === null) {
+			// 		return rendererPages.sort((b: DataObject) => b.file.ctime, selectSort.sort);
+			// 	}
+			// }
+			renderer = rendererPages.sort((b: DataObject) => b[selectSort.type],selectSort.sort);
 		}
 		return renderer;
 	};

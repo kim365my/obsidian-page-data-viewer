@@ -1,14 +1,13 @@
-import { DataviewFile } from "interface/DataviewFile";
 import CheckTableData from "./CheckTableData";
 import React from "react";
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
 function Table({
 	pages,
 	rows,
 	sourcePath,
 }: {
-	pages: DataArray<DataviewFile>;
+	pages: DataArray<DataObject>;
 	rows: string[];
 	sourcePath: string
 }) {
@@ -29,7 +28,7 @@ function Table({
 					</tr>
 				</thead>
 				<tbody className="table-view-tbody">
-					{pages.map((page: DataviewFile, index: number) => (
+					{pages.map((page: DataObject, index: number) => (
 						<tr key={"tr" + index}>
 							{rows.map((row, index: number) => (
 								<td key={"td" + index}>

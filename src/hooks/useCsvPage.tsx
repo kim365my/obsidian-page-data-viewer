@@ -1,10 +1,9 @@
-import { DataviewFile } from 'interface/DataviewFile';
 import { PagesDataContextType } from 'interface/PagesDataContextType';
 import CsvData from 'interface/csvData';
 import { useState } from 'react';
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
-export default function useCsvPage(pages:DataArray<DataviewFile>, input:CsvData): PagesDataContextType {
+export default function useCsvPage(pages:DataArray<DataObject>, input:CsvData): PagesDataContextType {
     const [rendererPages, setRendererPages] = useState(pages);
 	// 현재 페이지
 	const [currentPageNum, setCurrentPageNum] = useState(1);
@@ -18,10 +17,10 @@ export default function useCsvPage(pages:DataArray<DataviewFile>, input:CsvData)
 
     // 검색
 	const [searchValue, setSearchValue] = useState("");
-	const pagesSearching = (filetingPages: DataArray<DataviewFile>, search: string) => {
+	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
 		let searchPages = filetingPages;
 		if (search !== "") {
-			searchPages = searchPages?.filter((page: DataviewFile) => page?.title?.toLowerCase().includes(search));
+			searchPages = searchPages?.filter((page: DataObject) => page?.title?.toLowerCase().includes(search));
 		}
 		return searchPages;
 	}

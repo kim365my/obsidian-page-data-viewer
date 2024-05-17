@@ -1,7 +1,6 @@
 import getDataviewAPI from "API/Dataview";
-import { Literal } from "obsidian-dataview";
+import { Literal, Link } from "obsidian-dataview";
 import { getFileRealLink } from "Utils/getFileRealLink";
-import { Link } from "interface/DataviewFile";
 import { Fragment } from "react/jsx-runtime";
 import React, { useEffect, useRef } from "react";
 import { MarkdownRenderer } from "obsidian";

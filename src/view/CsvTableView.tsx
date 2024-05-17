@@ -1,6 +1,5 @@
 import { PagesDataContext } from "context/PagesDataContext";
 import { useEffect, useState } from "react";
-import { DataviewFile } from "interface/DataviewFile";
 import useCsvPage from "hooks/useCsvPage";
 import csvInputValidation from "validation/csvInputValidation";
 import getDataviewAPI from "API/Dataview";
@@ -8,7 +7,7 @@ import ToolBar from "components/toolbar/ToolBar";
 import Table from "components/table/Table";
 import Lading from "components/Lading";
 import { MarkdownPostProcessorContext } from "obsidian";
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
 export default function CsvTableView({
 	ctx,
@@ -20,11 +19,11 @@ export default function CsvTableView({
 	const dv = getDataviewAPI();
 	const input = csvInputValidation(source);
 	const [isLoading, setIsLoading] = useState(true);
-	const [pages, setPages] = useState([] as DataArray<DataviewFile>);
+	const [pages, setPages] = useState([] as DataArray<DataObject>);
 	const pageData = useCsvPage(pages, input);
 
 	useEffect(() => {
-		dv.io.csv(input.pages).then((csv: DataArray<DataviewFile>) => {
+		dv.io.csv(input.pages).then((csv: DataArray<DataObject>) => {
 			if (csv.length !== 0) {
 				setPages(csv);
 				// 검색

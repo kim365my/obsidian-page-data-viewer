@@ -1,8 +1,7 @@
-import { DataviewFile } from 'interface/DataviewFile';
 import { filter } from "interface/pageData";
-import { Literal } from "obsidian-dataview";
+import { Literal, DataObject } from "obsidian-dataview";
 
-export function filterPages(page: DataviewFile, selectFilter: filter): boolean {
+export function filterPages(page: DataObject, selectFilter: filter): boolean {
 	const target = (selectFilter.target) ? String(selectFilter.target).toLowerCase() : "";
 	// target이 프로퍼티인 경우 target은 key, target_content는 value인 형태
 	const target_content = selectFilter.target_content ? String(selectFilter.target_content).toLowerCase() : "";

@@ -6,9 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
-import { DataviewFile } from "interface/DataviewFile";
 import { MarkdownPostProcessorContext } from "obsidian";
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
 export default function ReactView({
 	source,
@@ -25,7 +24,7 @@ export default function ReactView({
 	const [pages, setPages] = useState(dv.pages(input.pages));
 	const pageData = usePage(pages, input);
 
-	const innitPages = useCallback((data: DataArray<DataviewFile>) => {
+	const innitPages = useCallback((data: DataArray<DataObject>) => {
 		// 검색
 		if (pageData.searchValue !== "") {
 			data = pageData.pagesSearching(data, pageData.searchValue);

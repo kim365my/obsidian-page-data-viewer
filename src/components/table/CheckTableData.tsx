@@ -1,8 +1,8 @@
 import React from 'react';
-import { DataviewFile} from 'interface/DataviewFile'
 import { getFileRealLink } from 'Utils/getFileRealLink';
 import { CheckRawList } from "./CheckRawList";
 import { isImageEmbed } from "./CheckRawList";
+import { DataObject, STask } from "obsidian-dataview";
 
 export default React.memo(CheckTableData);
 
@@ -11,7 +11,7 @@ function CheckTableData({
 	row,
 	sourcePath,
 }: {
-	page: DataviewFile;
+	page: DataObject;
 	row: string;
 	sourcePath: string;
 }) {
@@ -22,7 +22,7 @@ function CheckTableData({
 		if (fileType === "tasks") {
 			const tasks = page.file.tasks;
 			if (tasks.length !== 0) {
-				const completedTasks = tasks.filter(t => t.completed);
+				const completedTasks = tasks.filter((t: STask) => t.completed);
 				const progress = Math.round((completedTasks.length / tasks.length || 0) * 100);
 	
 				return (
@@ -43,7 +43,7 @@ function CheckTableData({
 	return <CheckRawList value={value} sourcePath={sourcePath} inline={false} />;
 }
 
-function pageCoverUrl(page: DataviewFile) {
+function pageCoverUrl(page: DataObject) {
 	let src = "";
 	
 	switch (typeof page.cover_url) {

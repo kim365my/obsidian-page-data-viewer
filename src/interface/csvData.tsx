@@ -1,9 +1,8 @@
-import { DataviewFile } from "./DataviewFile";
 import { sort } from "./pageData";
-import { DataArray } from "obsidian-dataview";
+import { DataArray, DataObject } from "obsidian-dataview";
 
 export default interface CsvData {
-	readonly pages: DataArray<DataviewFile>;
+	readonly pages: DataArray<DataObject>;
 	readonly rows: Array<string>;
 	readonly selectedValue: number;
 	readonly selectedArr: number[];
