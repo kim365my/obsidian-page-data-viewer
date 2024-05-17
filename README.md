@@ -2,57 +2,64 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 
 위의 레포를 플러그인으로 변환하였습니다
 
-# 예시 코드
+# Obsidian page data viewer
+![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/945e394f-cf5b-479d-9936-174926efc566)
+
+## 작성형식
+
 ````
 ```page-table
-"pages": "#독서",
-"rows" : ["cover_url", "file.link", "author", "created", "tags", "book_note"],
-"filter" : [
+"header": "제목", // (선택)
+"pages": "(dataview 쿼리)",
+"rows": ["cover_url", "file.link"], // (선택 | 작성하지 않을 경우 기본 값 "file.link");
+"selectedValue": 20, // (선택 | 작성하지 않을 경우 기본 값 10)
+"filter": [ // (선택)
+	 {
+		 "label": "필터 목록에 표시할 이름",
+		 "type": "tags나 property, file.변수 사용가능",
+		 "target": "tags의 이름이나 property 속성명 또는 file.변수에서 포함시킬 대상",
+		 "target_content": "target", // (선택 | target이 property인 경우 target의 내용을 비교하기 위한 변수)
+		 "target_isInclude": "true | false" // (선택 | target이 type에 포함되어 있는지 판별)
+	 }
+],
+"filterDefault": ["label명을 작성"], // (선택)
+"sort": [ // (선택)
 	{
-		"label" : "완독서",
-		"type": "property",
-		"target": "status",
-		"target_content": "true"
-	},
-	{
-		"label" : "읽고 있는 책",
-		"type": "property",
-		"target": "status",
-		"target_content": "false"
-	},
-	{
-		"label" : "eBook만",
-		"class": "도서분류",
-		"type": "property",
-		"target": "category",
-		"target_content": "eBook"
-	},
-	{
-		"label" : "영어공부만",
-		"class": "도서분류",
-		"type": "property",
-		"target": "genre",
-		"target_content": "영어"
-	},
-	{
-		"label" : "프로그래밍만",
-		"class": "도서분류",
-		"type": "tags",
-		"target": "프로그래밍",
-		"target_isInclude": "true"
+		"label": "정렬 목록에 표시할 이름",
+		"type": "property나 file.cday, file.mday 등",
+		"sort": "asc나 desc"
 	}
 ],
-"sort" : [
-	{
-		"label": "완독일순 (최신순)",
-		"type": "finish_read_date",
-		"sort": "desc"
-	},
-	{
-		"label": "완독일순 (오래된순)",
-		"type": "finish_read_date",
-		"sort": "asc"
-	}
-]
+"sortDefault": 1, // (선택 | 기본값은 0),
+"cls": "클래스명" // (선택)
 ```
 ````
+
+## 변수
+
+- pages: dataview의 pages와 동일
+- rows: (선택) 표시될 row목록, 기본값 : file.link
+- header: (선택) 제목추가
+- selectedValue: (선택) 한번에 표시될 페이지 수, 기본값 : 10
+- filter : (선택) 테이블 필터링
+	- 변수목록
+		- label : 표시될 값을 작성
+		- type: tags나 property, file.변수 사용가능
+		- target: tags의 이름이나 property 속성명 또는 file.변수에서 포함시킬 대상
+		- target_content : property를 사용할 경우 target의 내용을 비교하기 위한 변수
+		- target_isInclude : (true/ false) tags나 property가 해당 md 문서에 존재하는지 판단
+- filterDefault : (선택) filter 중 기본적으로 사용하고 싶은 필터가 있을 경우 해당 필터의 label을 작성해서 사용
+- sort : (선택) sort를 추가할 수 있음
+- sortDefault : (선택) sort 중에서 기본적으로 사용하고 싶은 필터가 있을 경우 해당 번호 작성 (0부터 시작하므로 주의)
+- cls: (선택) 해당 테이블에 클래스 추가 가능
+
+
+## CSV 지원
+
+````
+```page-table-csv
+"pages":"etc/csv/좋아하는_노래.csv" 
+```
+````
+
+필터 기능을 제외한 변수를 모두 사용할 수 있습니다.
