@@ -15,7 +15,6 @@ function CheckTableData({
 	row: string;
 	sourcePath: string;
 }) {
-	const value = page[row];
 
 	if (row.contains("file.")) {
 		const fileType = row.replace("file.", "");
@@ -38,9 +37,13 @@ function CheckTableData({
 		return <CheckRawList value={page.file[fileType]} sourcePath={sourcePath} inline={false} />
 	} else if (row === "cover_url") {
 		return pageCoverUrl(page);
+	} else if (row.startsWith("rTime_")) {
+		const startNum = row.indexOf("rTime_") + 6;
+		const rowName = row.slice(startNum, row.length);
+		return <CheckRawList value={page[rowName]} sourcePath={sourcePath} inline={false} relativeTime={true} />;
 	}
 
-	return <CheckRawList value={value} sourcePath={sourcePath} inline={false} />;
+	return <CheckRawList value={page[row]} sourcePath={sourcePath} inline={false} />;
 }
 
 function pageCoverUrl(page: DataObject) {

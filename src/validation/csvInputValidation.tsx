@@ -1,7 +1,7 @@
-import CsvData from "interface/csvData";
+import csvData from "interface/csvData";
 import { sort } from "interface/pageData";
 
-export default function csvInputValidation(source: string): CsvData {
+export default function csvInputValidation(source: string): csvData {
 	const input = JSON.parse(`{${source}}`);
 	const defaultSelectedArr = [5, 10, 20, 30, 40, 50];
 	const sortList: sort[] = [

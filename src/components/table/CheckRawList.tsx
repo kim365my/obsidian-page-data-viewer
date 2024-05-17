@@ -5,7 +5,7 @@ import { Fragment } from "react/jsx-runtime";
 import React, { useEffect, useRef } from "react";
 import { MarkdownRenderer } from "obsidian";
 import { usePlugin } from "context/PluginContext";
-import { renderMinimalDate, currentLocale, renderMinimalDuration } from "../../Utils/renderDate";
+import { renderMinimalDate, currentLocale, renderMinimalDuration, getRelativeTime } from "../../Utils/renderDate";
 
 function RawMarkdown({ sourcePath, content, inline = true, cls }: {
     content: string;
@@ -56,10 +56,12 @@ function CheckForRaw({
 	value,
 	inline = true,
 	sourcePath,
+	relativeTime = false
 }: {
 	value: Literal;
 	inline: boolean;
 	sourcePath: string;
+	relativeTime?: boolean;
 }) {
 	const dv = getDataviewAPI();
 
@@ -70,7 +72,13 @@ function CheckForRaw({
 	} else if (dv.value.isNumber(value) || dv.value.isBoolean(value)) {
 		return <>{"" + value}</>;
 	} else if (dv.value.isDate(value)) {
-		return <>{renderMinimalDate(value, dv.settings, currentLocale())}</>;
+		return (
+			<>
+				{relativeTime
+					? getRelativeTime(value, dv.settings, currentLocale())
+					: renderMinimalDate(value, dv.settings, currentLocale())}
+			</>
+		);
 	} else if (dv.value.isDuration(value)) {
 		return <>{renderMinimalDuration(value)}</>;
 	} else if (dv.value.isLink(value)) {

@@ -36,3 +36,12 @@ export function currentLocale(): string {
 	if (typeof window === "undefined") return "en-US";
 	return window.navigator.language;
 }
+
+export function getRelativeTime(dateTime: DateTime, setting: Literal, locale: string): string {
+	const now = DateTime.now();
+	if (now.year !== dateTime.year) {
+		return  dateTime.toLocal().toFormat(setting?.defaultDateFormat, { locale });
+	}
+	const relative = dateTime.toRelativeCalendar({ base: now, locale: locale });
+	return (relative)? relative: "";
+}

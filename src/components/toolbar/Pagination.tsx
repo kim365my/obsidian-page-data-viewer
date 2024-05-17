@@ -1,6 +1,5 @@
 import { usePagesData } from "context/PagesDataContext";
 import { usePagination } from "../../hooks/usePagination";
-import React from "react";
 
 export default function Pagination() {
 	const { currentPageNum, fullPaginationNum, setCurrentPageNum, viewBtnNum } = usePagesData();

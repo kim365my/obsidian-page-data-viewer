@@ -1,12 +1,13 @@
+import getDataviewAPI from "API/Dataview";
 import { filter } from "interface/pageData";
 import { Literal, DataObject } from "obsidian-dataview";
+import { DateTime } from "luxon";
 
 export function filterPages(page: DataObject, selectFilter: filter): boolean {
+	const dv = getDataviewAPI();
 	const target = (selectFilter.target) ? String(selectFilter.target).toLowerCase() : "";
-	// target이 프로퍼티인 경우 target은 key, target_content는 value인 형태
-	const target_content = selectFilter.target_content ? String(selectFilter.target_content).toLowerCase() : "";
 	// filter type에 따라서 구분
-	const target_isInclude = selectFilter.target_isInclude === "true" || false;
+	const target_isInclude = selectFilter.target_isInclude == "true" || false;
 
 	switch (selectFilter.type) {
 		case "tags": {
@@ -15,22 +16,25 @@ export function filterPages(page: DataObject, selectFilter: filter): boolean {
 		}
 		case "property": {
 			const property = page[target];
-			if (target_content) {
-				if (property instanceof Date) {
+			// target이 프로퍼티인 경우 target은 key, target_content는 value인 형태
+			if (selectFilter.target_content) {
+				const target_content = selectFilter.target_content.toLowerCase().trim();
+				if (dv.value.isDate(property)) {
 					if (target_content.includes("~")) {
 						// 기간 설정
 						const dateDuration = target_content.split("~");
-						const firstDate = new Date(dateDuration[0].trim());
+						const firstDate = DateTime.fromISO(dateDuration[0].trim());
 
 						const lastDate = dateDuration[1].includes("now")
-							? new Date()
-							: new Date(dateDuration[1].trim());
+							? DateTime.now()
+							: DateTime.fromISO(dateDuration[1].trim());
 						return firstDate <= property && lastDate >= property;
 					} else {
-						const date = new Date(target_content);
-						return Math.ceil(Math.abs(date.getTime() - property.getTime()) / (1000 * 60 * 60 * 24))=== 0;
+						const date = DateTime.fromISO(target_content);
+						const dur  = date.diff(property, ['year', 'months', 'days']).toObject();
+						return dur.years === 0 && dur.months === 0 && dur.days === 0;
 					}
-				} else if (property instanceof Array) {
+				} else if (dv.value.isArray(property)) {
 					return property.includes(target_content);
 				} else {
 					return String(property).toLowerCase() === target_content;

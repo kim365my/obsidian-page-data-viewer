@@ -17,8 +17,10 @@ export default class MyPlugin extends Plugin {
 			this.registerEvent(this.app.metadataCache.on("dataview:metadata-change", handle));
 		}
 		this.registerEvent(this.app.metadataCache.on("dataview:index-ready", () => {
-			this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {
+			this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {				
+				if (!ctx.sourcePath) return;
 				el.onClickEvent(handleClick);
+				
 				this.root = createRoot(el);
 				this.root.render(
 					<ErrorBoundary FallbackComponent={ErrorPage}>
@@ -31,6 +33,7 @@ export default class MyPlugin extends Plugin {
 		}));
 
 		this.registerMarkdownCodeBlockProcessor("page-table-csv", (source, el, ctx) => {
+			if (!ctx.sourcePath) return;
 			el.onClickEvent(handleClick);
 			this.root = createRoot(el);
 			this.root.render(

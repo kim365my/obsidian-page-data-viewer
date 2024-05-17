@@ -1,7 +1,7 @@
 import { sort } from "./pageData";
 import { DataArray, DataObject } from "obsidian-dataview";
 
-export default interface CsvData {
+export default interface csvData {
 	readonly pages: DataArray<DataObject>;
 	readonly rows: Array<string>;
 	readonly selectedValue: number;
@@ -10,7 +10,7 @@ export default interface CsvData {
 	readonly sort: sort[];
 	readonly selectedSortValue: number;
 	readonly cls: string;
-	readonly header?: string | null;
-	readonly options?: Array<string> | null;
+	readonly header?: string;
+	readonly options?: Array<string>;
 }
 

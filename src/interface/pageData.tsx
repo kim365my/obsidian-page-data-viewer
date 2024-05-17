@@ -8,8 +8,8 @@ export default interface pageData {
 	readonly sort: sort[];
 	readonly selectedSortValue: number;
 	readonly cls: string;
-	readonly header?: string | null;
-	readonly options?: Array<string> | null;
+	readonly header?: string;
+	readonly options?: Array<string>;
 }
 export interface filter {
 	"label": string;

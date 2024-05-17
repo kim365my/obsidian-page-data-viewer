@@ -1,9 +1,9 @@
 import { PagesDataContextType } from 'interface/PagesDataContextType';
-import CsvData from 'interface/csvData';
 import { useState } from 'react';
 import { DataArray, DataObject } from "obsidian-dataview";
+import csvData from 'interface/csvData';
 
-export default function useCsvPage(pages:DataArray<DataObject>, input:CsvData): PagesDataContextType {
+export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): PagesDataContextType {
     const [rendererPages, setRendererPages] = useState(pages);
 	// 현재 페이지
 	const [currentPageNum, setCurrentPageNum] = useState(1);
