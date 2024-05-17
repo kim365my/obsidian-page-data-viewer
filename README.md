@@ -40,13 +40,6 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 		"type": "tags",
 		"target": "프로그래밍",
 		"target_isInclude": "true"
-	},
-	{
-		"label" : "올해의 독서",
-		"class": "기간",
-		"type": "property",
-		"target": "created",
-		"target_content": "2024-01-01 ~ now"
 	}
 ],
 "sort" : [
