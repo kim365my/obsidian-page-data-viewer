@@ -5,6 +5,10 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 # Obsidian page data viewer
 ![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/945e394f-cf5b-479d-9936-174926efc566)
 
+## 필수 플러그인
+
+본 플러그인을 사용하려면 반드시 dataview 플러그인이 필요합니다
+
 ## 작성형식
 
 ````
