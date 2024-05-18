@@ -21,12 +21,15 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
 	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
 		let searchPages = filetingPages;
 		if (search !== "") {
+			search = search.toLowerCase().trim();
 			const rows = input.rows;
 			searchPages = searchPages?.filter((page: DataObject) => {
 				let result = false;
 				rows.forEach((row) => {
 					const value = page[row];
-					result = result || value.toLowerCase().includes(search);
+					if (value) {
+						result = result || String(value).toLowerCase().includes(search);
+					}
 				})
 				return result;
 			});

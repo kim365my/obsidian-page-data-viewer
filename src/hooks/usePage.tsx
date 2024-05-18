@@ -20,14 +20,16 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 	// 검색
 	const [searchValue, setSearchValue] = useState("");
 	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
-		if (search === "") {
-			return filetingPages;
-		} else {
-			const searchPages = filetingPages?.filter((page: DataObject) =>
+		let searchPages = filetingPages;
+		if (search !== "") {
+			search = search.toLowerCase().trim();
+
+			searchPages = filetingPages?.filter((page: DataObject) =>
 				page.file.name.toLowerCase().includes(search)
 			);
-			return searchPages;
 		}
+		return searchPages;
+
 	};
 	const handleSearch = (search: string) => {
 		setSearchValue(search);

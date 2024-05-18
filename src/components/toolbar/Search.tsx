@@ -11,7 +11,7 @@ export default function Search() {
 				spellCheck={false}
 				placeholder="입력하여 검색 시작..."
 				value={searchValue}
-				onChange={(e) => handleSearch(e.target.value.toLowerCase().trim())}
+				onChange={(e) => handleSearch(e.target.value)}
 			/>
 			<div
 				className="search-input-clear-button"
