@@ -2,6 +2,7 @@ import { PagesDataContextType } from 'interface/PagesDataContextType';
 import { useState } from 'react';
 import { DataArray, DataObject } from "obsidian-dataview";
 import csvData from 'interface/csvData';
+import { Platform } from "obsidian";
 
 export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): PagesDataContextType {
     const [rendererPages, setRendererPages] = useState(pages);
@@ -12,7 +13,7 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
 	const selectedArr = input.selectedArr;
 
 	// pagination 버튼 갯수
-	const viewBtnNum = 10;
+	const viewBtnNum = (Platform.isPhone)? 5 : 10;
 	const fullPaginationNum = Math.ceil(rendererPages?.length / viewListNum);
 
     // 검색
@@ -20,7 +21,15 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
 	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
 		let searchPages = filetingPages;
 		if (search !== "") {
-			searchPages = searchPages?.filter((page: DataObject) => page?.title?.toLowerCase().includes(search));
+			const rows = input.rows;
+			searchPages = searchPages?.filter((page: DataObject) => {
+				let result = false;
+				rows.forEach((row) => {
+					const value = page[row];
+					result = result || value.toLowerCase().includes(search);
+				})
+				return result;
+			});
 		}
 		return searchPages;
 	}

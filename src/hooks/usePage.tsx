@@ -3,6 +3,7 @@ import { filterPages } from "Utils/filterPages";
 import { PagesDataContextType } from "interface/PagesDataContextType";
 import pageData from "interface/pageData";
 import { DataArray, DataObject } from "obsidian-dataview";
+import { Platform } from "obsidian";
 
 export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataContextType {
 	const [rendererPages, setRendererPages] = useState(pages);
@@ -13,7 +14,7 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 	const selectedArr = input.selectedArr;
 
 	// pagination 버튼 갯수
-	const viewBtnNum = 10;
+	const viewBtnNum = (Platform.isPhone)? 5 : 10;
 	const fullPaginationNum = Math.ceil(rendererPages.length / viewListNum);
 
 	// 검색
