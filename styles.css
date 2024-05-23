@@ -7,6 +7,10 @@ If your plugin does not need CSS, delete this file.
 
 */
 /* loading spinner */
+.block-language-page-table .loading,
+.block-language-page-table-csv .loading {
+	text-align: center;
+}
 .block-language-page-table .loading .loading_spinner,
 .block-language-page-table-csv .loading .loading_spinner {
 	margin: 0 auto;
@@ -103,20 +107,4 @@ If your plugin does not need CSS, delete this file.
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-}
-
-/* table */
-.block-language-page-table-csv .external-link {
-	background: none;
-}
-.block-language-page-table-csv del {
-	text-decoration: none;
-}
-.block-language-page-table-csv del::before {
-	content: " ";
-}
-
-.block-language-page-table .loading,
-.block-language-page-table-csv .loading {
-	text-align: center;
 }

@@ -2,12 +2,11 @@ import Table from "components/table/Table";
 import { PagesDataContext } from "context/PagesDataContext";
 import { usePage } from "hooks/usePage";
 import inputValidation from "validation/inputValidation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
 import { MarkdownPostProcessorContext } from "obsidian";
-import { DataArray, DataObject } from "obsidian-dataview";
 
 export default function ReactView({
 	source,
@@ -24,7 +23,15 @@ export default function ReactView({
 	const [pages, setPages] = useState(dv.pages(input.pages));
 	const pageData = usePage(pages, input);
 
-	const innitPages = useCallback((data: DataArray<DataObject>) => {
+	useEffect(() => {
+		metadataChangeEvent(() => {
+			const data = dv.pages(input.pages);
+			setPages(data);
+		});
+	}, []);
+
+	useEffect(() => {
+		let data = pages;
 		// 검색
 		if (pageData.searchValue !== "") {
 			data = pageData.pagesSearching(data, pageData.searchValue);
@@ -38,21 +45,11 @@ export default function ReactView({
 			data = pageData?.pagesFiltering(data, pageData?.selectFilterValue);
 		}
 		pageData.setRendererPages(data);
-	}, []);
 
-	useEffect(() => {
-		innitPages(pages);
-		metadataChangeEvent(() => {
-			const data = dv.pages(input.pages);
-			if (data.length !== 0) {
-				setPages(data);
-				innitPages(data);
-			}
-		});
 		if (isLoading) {
 			setIsLoading(false);
 		}
-	}, []);
+	}, [pages]);
 
 	return (
 		<PagesDataContext.Provider value={pageData}>

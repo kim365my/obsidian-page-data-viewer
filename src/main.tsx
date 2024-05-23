@@ -5,6 +5,8 @@ import ReactView from "view/ReactView";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorPage } from "components/ErrorPage";
 import { PluginContext } from "context/PluginContext";
+import TasksView from "view/TasksView";
+
 
 export default class MyPlugin extends Plugin {
 	root: Root | null = null;
@@ -30,6 +32,16 @@ export default class MyPlugin extends Plugin {
 					</ErrorBoundary>
 				);
 			});
+	
+			this.registerMarkdownCodeBlockProcessor("page-tasks", (source, el, ctx) => {
+				if (!ctx.sourcePath) return;
+				this.root = createRoot(el);
+				this.root.render(
+					<ErrorBoundary FallbackComponent={ErrorPage}>
+						<TasksView source={source} ctx={ctx} metadataChangeEvent={metadataChangeEvent}></TasksView>
+					</ErrorBoundary>
+				);
+			})
 		}));
 
 		this.registerMarkdownCodeBlockProcessor("page-table-csv", (source, el, ctx) => {
