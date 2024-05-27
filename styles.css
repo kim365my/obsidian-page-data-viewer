@@ -25,6 +25,13 @@ If your plugin does not need CSS, delete this file.
 	0% {transform: rotate(0deg);}	
 	100% {transform: rotate(360deg);}	
 }
+.block-language-page-table table td:has(.inner-icon) {
+	display: flex;
+	gap: 0.3rem;
+}
+.block-language-page-table table td:has(.inner-icon) > * {
+	padding: 0;
+}
 
 /* toolbar */
 .toolbar {
@@ -107,4 +114,17 @@ If your plugin does not need CSS, delete this file.
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+/* tasks view */
+
+.tasksListWrap {
+	display: flex;
+	gap: 20px;
+}
+.tasksListWrap :is(h1, h2, h3, h4, h5, h6) {
+	margin: 0;
+}
+.taskList {
+	width: 100%;
 }

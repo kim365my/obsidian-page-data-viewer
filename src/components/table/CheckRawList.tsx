@@ -56,7 +56,7 @@ function CheckForRaw({
 	value,
 	inline = true,
 	sourcePath,
-	relativeTime = false
+	relativeTime = false,
 }: {
 	value: Literal;
 	inline: boolean;
@@ -119,15 +119,15 @@ function CheckForRaw({
         return <Fragment>&lt;function&gt;</Fragment>;
 	} else if (dv.value.isArray(value)) {
 		if (!inline) {
-            return (
-                <ul className={"dataview dataview-ul dataview-result-list-ul"}>
-                    {value.map((subValue: Literal, index: number) => (
-                        <li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
-                            <CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
-                        </li>
-                    ))}
-                </ul>
-            );
+			return (
+				<ul className={"dataview dataview-ul dataview-result-list-ul"}>
+					{value.map((subValue: Literal, index: number) => (
+						<li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
+							<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
+						</li>
+					))}
+				</ul>
+			);
         } else {
 			if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
 

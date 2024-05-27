@@ -3,6 +3,8 @@ import { getFileRealLink } from 'Utils/getFileRealLink';
 import { CheckRawList } from "./CheckRawList";
 import { isImageEmbed } from "./CheckRawList";
 import { DataObject, STask } from "obsidian-dataview";
+import Progress from 'components/progress/Progress';
+import { FileText } from 'lucide-react';
 
 export default React.memo(CheckTableData);
 
@@ -15,42 +17,49 @@ function CheckTableData({
 	row: string;
 	sourcePath: string;
 }) {
-
-	if (row.contains("file.")) {
-		const fileType = row.replace("file.", "");
-		if (fileType === "tasks") {
-			const tasks = page.file.tasks;
-			if (tasks.length !== 0) {
-				const completedTasks = tasks.filter((t: STask) => t.completed);
-				const progress = Math.round((completedTasks.length / tasks.length || 0) * 100);
-	
-				return (
-					<span>
-						<progress value={progress} max="100"></progress>&nbsp;
-						<span>{progress}%</span>
-					</span>
-				);
-			} else {
-				return <span>No tasks</span>
-			}
-		}
-		return <CheckRawList value={page.file[fileType]} sourcePath={sourcePath} inline={false} />
-	} else if (row === "cover_url") {
-		return pageCoverUrl(page);
-	} else if (row.startsWith("rTime_")) {
+	let relativeTime = false;
+	if (row.startsWith("rTime_")) {
+		relativeTime = true;
 		const startNum = row.indexOf("rTime_") + 6;
-		const rowName = row.slice(startNum, row.length);
-		return <CheckRawList value={page[rowName]} sourcePath={sourcePath} inline={false} relativeTime={true} />;
+		row = row.slice(startNum, row.length);
 	}
 
-	return <CheckRawList value={page[row]} sourcePath={sourcePath} inline={false} />;
+	if (row.contains("file.")) {
+		const fileType = row.replace("file.", "").trim();
+		const file = page.file[fileType];
+		switch (fileType) {
+			case "tasks":
+				if (file.length !== 0) {
+					const completedTasks = file.filter((t: STask) => t.completed);
+					const progress = Math.round((completedTasks.length / file.length || 0) * 100);
+		
+					return <Progress progress={progress} />;
+				} else {
+					return <span>No tasks</span>
+				}
+			case "name":
+			case "link":
+				return (
+					<>
+						<div className="inner-icon">
+							<FileText width={16} height={16} />
+						</div>
+						<CheckRawList value={file} sourcePath={sourcePath} inline={false}/>
+					</>
+				);
+			default:
+				return <CheckRawList value={file} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} />;
+		}
+	}
+
+	return <CheckRawList value={page[row]} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} />;
 }
 
-function pageCoverUrl(page: DataObject) {
+export function PageCoverUrl({page}:{page: DataObject}) {
 	let src = "";
-	
+
 	switch (typeof page.cover_url) {
-		case "string": 
+		case "string":
 			// 페이지 cover_url이 웹 이미지를 불러오는 형식이라면
 			src = page.cover_url;
 			break;
@@ -58,12 +67,12 @@ function pageCoverUrl(page: DataObject) {
 			// 페이지 cover_url이 옵시디언 내부 이미지를 불러오는 방식이라면
 			src = getFileRealLink(page.cover_url.path);
 			break;
-		default: 
+		default:
 			// page가 null인 경우, 문서 내부의 첫번째 이미지에서 불러오기
 			for (const item of page.file.outlinks.values) {
 				if (isImageEmbed(item)) {
 					if (String(item.path).startsWith("http")) {
-						src = item.path
+						src = item.path;
 					} else {
 						src = getFileRealLink(item.path);
 					}
@@ -71,21 +80,22 @@ function pageCoverUrl(page: DataObject) {
 				}
 			}
 	}
-	if (src && src !== "") {
-		return (
-			<a
-				data-tooltip-position="top"
-				aria-label={page.file.name}
-				data-href={page.file.name}
-				href={page.file.link.path}
-				className="internal-link"
-				target="_blank"
-				rel="noopener"
-			>
-				<img src={src} />
-			</a>
-		);
-	}
 
-	return <></>
+	return (
+		<>
+			{src !== "" && (
+				<a
+					data-tooltip-position="top"
+					aria-label={page.file.name}
+					data-href={page.file.name}
+					href={page.file.link.path}
+					className="internal-link"
+					target="_blank"
+					rel="noopener"
+				>
+					<img src={src} />
+				</a>
+			)}
+		</>
+	);
 }

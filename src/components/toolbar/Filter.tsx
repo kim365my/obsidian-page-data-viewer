@@ -3,6 +3,7 @@ import { MenuContainer } from "./MenuContainer";
 import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 import Modal from "./Modal";
+import { FilterIcon } from "lucide-react";
 
 
 export default function Filter({filter, isMobile}: {filter: filter[], isMobile: boolean}) {
@@ -24,20 +25,7 @@ export default function Filter({filter, isMobile}: {filter: filter[], isMobile: 
 				className="filteringBtn clickable-icon nav-action-button"
 				aria-label="필터 보기"
 			>
-				<svg
-					className="svg-icon lucide-filter"
-					strokeLinejoin="round"
-					strokeLinecap="round"
-					strokeWidth="2"
-					stroke="currentColor"
-					fill="none"
-					viewBox="0 0 24 24"
-					height="24"
-					width="24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-				</svg>
+				<FilterIcon className="svg-icon" />
 				{visible && selectFilterValue && handleFilter && (
 					<MenuContainer
 						list={filter}

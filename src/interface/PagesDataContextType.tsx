@@ -25,5 +25,4 @@ export interface PagesDataContextType {
 	pagesFiltering ?: (filetingPages: DataArray<DataObject>, selectList: number[]) => DataArray<DataObject>,
 	pagesSorting: (index: number) => void,
 	pageSlice: () => DataArray<DataObject>
-	initPages?: (data: DataArray<DataObject>) => void
 }

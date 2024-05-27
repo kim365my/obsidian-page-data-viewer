@@ -19,22 +19,20 @@ export default function CsvTableView({
 	const dv = getDataviewAPI();
 	const input = csvInputValidation(source);
 	const [isLoading, setIsLoading] = useState(true);
-	const [pages, setPages] = useState([] as DataArray<DataObject>);
-	const pageData = useCsvPage(pages, input);
+	const pageData = useCsvPage([] as DataArray<DataObject>, input);
 
 	useEffect(() => {
-		dv.io.csv(input.pages).then((csv: DataArray<DataObject>) => {
-			if (csv.length !== 0) {
-				setPages(csv);
+		dv.io.csv(input.pages).then((data: DataArray<DataObject>) => {
+			if (data.length !== 0) {
 				// 검색
 				if (pageData.searchValue !== "") {
-					csv = pageData.pagesSearching(csv, pageData.searchValue);
+					data = pageData.pagesSearching(data, pageData.searchValue);
 				}
 				// 정렬
 				if (input.selectedSortValue !== 0) {
-					csv.values = csv.values.reverse();
+					data.values = data.values.reverse();
 				}
-				pageData.setRendererPages(csv);
+				pageData.setRendererPages(data);
 			}
 		});
 

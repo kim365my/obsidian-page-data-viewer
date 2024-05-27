@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { filterPages } from "Utils/filterPages";
 import { PagesDataContextType } from "interface/PagesDataContextType";
 import pageData from "interface/pageData";
 import { DataArray, DataObject } from "obsidian-dataview";
 import { Platform } from "obsidian";
+import { filterPages } from "Utils/filterPages";
 
 export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataContextType {
 	const [rendererPages, setRendererPages] = useState(pages);
@@ -14,40 +14,18 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 	const selectedArr = input.selectedArr;
 
 	// pagination 버튼 갯수
-	const viewBtnNum = (Platform.isPhone)? 5 : 10;
+	const viewBtnNum = (Platform.isPhone)? 8 : 10;
 	const fullPaginationNum = Math.ceil(rendererPages.length / viewListNum);
 
-	// 검색
-	const [searchValue, setSearchValue] = useState("");
-	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
-		let searchPages = filetingPages;
-		if (search !== "") {
-			search = search.toLowerCase().trim();
-
-			searchPages = filetingPages?.filter((page: DataObject) =>
-				page.file.name.toLowerCase().includes(search)
-			);
-		}
-		return searchPages;
-
-	};
-	const handleSearch = (search: string) => {
-		setSearchValue(search);
-		setRendererPages(pagesSearching(pages, search));
-	};
-	const handleSearchInit = () => {
-		setSearchValue("");
-		setRendererPages(pages);
-	};
 	// 필터
 	const [selectFilterValue, setSelectFilterValue] = useState(
 		input.filterDefault
 	);
 	const pagesFiltering = (
-		filetingPages: DataArray<DataObject>,
+		data: DataArray<DataObject>,
 		selectList: number[]
 	) => {
-		const renderer = filetingPages.filter((page: DataObject) => {
+		const renderer = data.filter((page: DataObject) => {
 			let result = true;
 			selectList.forEach((item) => {
 				result = result && filterPages(page, input.filter[item]);
@@ -60,7 +38,7 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 		if (selectFilterValue.includes(index)) {
 			deleteFilter(index);
 		} else {
-			let filetingPages = pages;
+			let data = pages;
 			if (index === 0) {
 				setSelectFilterValue([]);
 			} else {
@@ -68,13 +46,14 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 				selectList.push(index);
 				setSelectFilterValue(selectList);
 
-				// 검색어가 존재할 경우
-				if (searchValue !== "") {
-					filetingPages = pagesSearching(pages, searchValue);
-				}
-				filetingPages = pagesFiltering(filetingPages, selectList);
+				data = pagesFiltering(data, selectList);
 			}
-			setRendererPages(filetingPages);
+			setFilteringPages(data);
+			// 검색어가 존재할 경우
+			if (searchValue !== "") {
+				data = pagesSearching(data, searchValue);
+			}
+			setRendererPages(data);
 		}
 	};
 	const deleteFilter = (index: number) => {
@@ -83,17 +62,41 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 		);
 		setSelectFilterValue(selectList);
 
-		let filetingPages = pages;
+		let data = pages;
 		if (selectList.length !== 0) {
-			// 검색어가 존재할 경우
-			if (searchValue !== "") {
-				filetingPages = pagesSearching(pages, searchValue);
-			}
-			filetingPages = pagesFiltering(filetingPages, selectList);
+			data = pagesFiltering(data, selectList);
 		}
-		setRendererPages(filetingPages);
+		setFilteringPages(data);
+		// 검색어가 존재할 경우
+		if (searchValue !== "") {
+			data = pagesSearching(data, searchValue);
+		}
+		setRendererPages(data);
 	};
 
+	const [filteringPages, setFilteringPages] = useState(pagesFiltering(pages, selectFilterValue));
+	// 검색
+	const [searchValue, setSearchValue] = useState("");
+	const pagesSearching = (data: DataArray<DataObject>, search: string) => {
+		let searchPages = data;
+		if (search !== "") {
+			search = search.toLowerCase().trim();
+
+			searchPages = data?.filter((page: DataObject) =>
+				page.file.name.toLowerCase().includes(search)
+			);
+		}
+		return searchPages;
+
+	};
+	const handleSearch = (search: string) => {
+		setSearchValue(search);
+		setRendererPages(pagesSearching(filteringPages, search));
+	};
+	const handleSearchInit = () => {
+		setSearchValue("");
+		setRendererPages(filteringPages);
+	};
 	// 정렬
 	const [selectSortNum, setSelectSortNum] = useState(input.selectedSortValue);
 	const pagesSorting = (index: number) => {
@@ -106,12 +109,6 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 			);
 			renderer = rendererPages.sort((b: DataObject) => b.file[fileType],selectSort.sort);
 		} else {
-			// if (selectSort.type === "created") {
-			// 	const isCreated = rendererPages[0];
-			// 	if (isCreated === null) {
-			// 		return rendererPages.sort((b: DataObject) => b.file.ctime, selectSort.sort);
-			// 	}
-			// }
 			renderer = rendererPages.sort((b: DataObject) => b[selectSort.type],selectSort.sort);
 		}
 		return renderer;
@@ -158,7 +155,7 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 		pagesSearching,
 		pagesFiltering,
 		pagesSorting,
-		pageSlice
+		pageSlice,
 	};
 }
 

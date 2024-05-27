@@ -13,7 +13,7 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
 	const selectedArr = input.selectedArr;
 
 	// pagination 버튼 갯수
-	const viewBtnNum = (Platform.isPhone)? 5 : 10;
+	const viewBtnNum = (Platform.isPhone)? 8 : 10;
 	const fullPaginationNum = Math.ceil(rendererPages?.length / viewListNum);
 
     // 검색
@@ -61,12 +61,31 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
 		}
 	}
 	const pageSlice = () => {
-		// 정렬
 		const startNum = (currentPageNum -1) * viewListNum;
 		const endNum = ((currentPageNum -1) * viewListNum) + viewListNum
 		const data = rendererPages.slice(startNum, endNum);
 		return data
 	}
 
-	return { rendererPages, setRendererPages, currentPageNum, setCurrentPageNum, viewListNum, setViewListNum, viewBtnNum, fullPaginationNum, selectedArr, searchValue, setSearchValue, handleSearch, handleSearchInit, selectSortNum, setSelectSortNum, handleSort, pagesSearching, pagesSorting, pageSlice };
+	return {
+		rendererPages,
+		setRendererPages,
+		currentPageNum,
+		setCurrentPageNum,
+		viewListNum,
+		setViewListNum,
+		viewBtnNum,
+		fullPaginationNum,
+		selectedArr,
+		searchValue,
+		setSearchValue,
+		handleSearch,
+		handleSearchInit,
+		selectSortNum,
+		setSelectSortNum,
+		handleSort,
+		pagesSearching,
+		pagesSorting,
+		pageSlice,
+	};
 }

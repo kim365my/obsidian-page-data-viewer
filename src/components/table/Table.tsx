@@ -1,4 +1,4 @@
-import CheckTableData from "./CheckTableData";
+import CheckTableData, { PageCoverUrl } from "./CheckTableData";
 import React from "react";
 import { DataArray, DataObject } from "obsidian-dataview";
 
@@ -32,11 +32,15 @@ function Table({
 						<tr key={"tr" + index}>
 							{rows.map((row, index: number) => (
 								<td key={"td" + index}>
-									<CheckTableData
-										page={page}
-										row={row}
-										sourcePath={sourcePath} 
-									/>
+									{row === "cover_url" ? (
+										<PageCoverUrl page={page} />
+									) : (
+										<CheckTableData
+											page={page}
+											row={row}
+											sourcePath={sourcePath}
+										/>
+									)}
 								</td>
 							))}
 						</tr>

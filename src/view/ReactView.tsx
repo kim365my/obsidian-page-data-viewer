@@ -7,66 +7,91 @@ import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
 import { MarkdownPostProcessorContext } from "obsidian";
+import pageData from "interface/pageData";
+import { DataArray, DataObject } from "obsidian-dataview";
 
 export default function ReactView({
 	source,
 	ctx,
 	metadataChangeEvent,
+	indexReadyEvent,
 }: {
 	source: string;
 	ctx: MarkdownPostProcessorContext;
 	metadataChangeEvent: (handle: () => void) => void;
+	indexReadyEvent: (handle: () => void) => void;
 }) {
 	const dv = getDataviewAPI();
 	const input = inputValidation(source);
-	const [isLoading, setIsLoading] = useState(true);
-	const [pages, setPages] = useState(dv.pages(input.pages));
-	const pageData = usePage(pages, input);
+	const [isLoading, setIsLoading] = useState(dv.index.initialized);
+	const [pages, setPages] = useState((isLoading)? dv.pages(input.pages) :[]);
 
 	useEffect(() => {
-		metadataChangeEvent(() => {
-			const data = dv.pages(input.pages);
-			setPages(data);
-		});
+		if (isLoading) {
+			metadataChangeEvent(() => {
+				setPages(dv.pages(input.pages));
+			});
+		} else {
+			indexReadyEvent(() => {
+				setIsLoading(true);
+				setPages(dv.pages(input.pages));
+			});
+		}
 	}, []);
 
+	return (
+		<>
+			{!isLoading ? (
+				<Lading />
+			) : (
+				<PagesTable
+					input={input}
+					pages={pages}
+					sourcePath={ctx.sourcePath}
+				/>
+			)}
+		</>
+	);
+}
+
+function PagesTable({
+	input,
+	pages,
+	sourcePath,
+}: {
+	input: pageData;
+	pages: DataArray<DataObject>;
+	sourcePath: string;
+}) {
+	const pageData = usePage(pages, input);
 	useEffect(() => {
 		let data = pages;
-		// 검색
-		if (pageData.searchValue !== "") {
-			data = pageData.pagesSearching(data, pageData.searchValue);
-		}
 		// 필터링
 		if (
 			pageData.pagesFiltering &&
 			pageData.selectFilterValue &&
 			pageData.selectFilterValue?.length !== 0
 		) {
-			data = pageData?.pagesFiltering(data, pageData?.selectFilterValue);
+			data = pageData.pagesFiltering(data, pageData.selectFilterValue);
 		}
-		pageData.setRendererPages(data);
+		// 검색
+		if (pageData.searchValue !== "") {
+			data = pageData.pagesSearching(data, pageData.searchValue);
+		}
 
-		if (isLoading) {
-			setIsLoading(false);
-		}
+		pageData.setRendererPages(data);
 	}, [pages]);
 
 	return (
 		<PagesDataContext.Provider value={pageData}>
-			{isLoading ? (
-				<Lading />
-			) : (
-				<>
-					<ToolBar input={input} />
-					<div className={input.cls}>
-						<Table
-							pages={pageData.pageSlice()}
-							rows={input.rows}
-							sourcePath={ctx.sourcePath}
-						/>
-					</div>
-				</>
-			)}
+			<ToolBar input={input} />
+			<div className={input.cls}>
+				<Table
+					pages={pageData.pageSlice()}
+					rows={input.rows}
+					sourcePath={sourcePath}
+				/>
+			</div>
 		</PagesDataContext.Provider>
 	);
 }
