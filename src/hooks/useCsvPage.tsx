@@ -19,22 +19,22 @@ export default function useCsvPage(pages:DataArray<DataObject>, input:csvData): 
     // 검색
 	const [searchValue, setSearchValue] = useState("");
 	const pagesSearching = (filetingPages: DataArray<DataObject>, search: string) => {
-		let searchPages = filetingPages;
+		let result = filetingPages;
 		if (search !== "") {
 			search = search.toLowerCase().trim();
 			const rows = input.rows;
-			searchPages = searchPages?.filter((page: DataObject) => {
-				let result = false;
+			result = result?.filter((page: DataObject) => {
+				let isFilter = false;
 				rows.forEach((row) => {
 					const value = page[row];
 					if (value) {
-						result = result || String(value).toLowerCase().includes(search);
+						isFilter = isFilter || String(value).toLowerCase().includes(search);
 					}
 				})
-				return result;
+				return isFilter;
 			});
 		}
-		return searchPages;
+		return result;
 	}
 	const handleSearch = (search: string) => {
 		setSearchValue(search);

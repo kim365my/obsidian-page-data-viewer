@@ -19,10 +19,12 @@ export default function CsvTableView({
 	const dv = getDataviewAPI();
 	const input = csvInputValidation(source);
 	const [isLoading, setIsLoading] = useState(true);
-	const pageData = useCsvPage([] as DataArray<DataObject>, input);
+	const [pages, setPages] = useState([]);
+	const pageData = useCsvPage(pages, input);
 
 	useEffect(() => {
 		dv.io.csv(input.pages).then((data: DataArray<DataObject>) => {
+			setPages(data);
 			if (data.length !== 0) {
 				// 검색
 				if (pageData.searchValue !== "") {
