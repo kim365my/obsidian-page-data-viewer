@@ -1,11 +1,11 @@
 import getDataviewAPI from "API/Dataview";
 import Lading from "components/Lading";
 import CircleProgress from "components/progress/CircleProgress";
-import { CheckRawList, Markdown } from "components/table/CheckRawList";
+import { CheckRawList } from "components/table/CheckRawList";
 import { usePlugin } from "context/PluginContext";
 import useTaskList from "hooks/useTaskList";
 import { MarkdownPostProcessorContext, Platform, Vault } from "obsidian";
-import { DataArray, DataObject, STask } from "obsidian-dataview";
+import { DataArray, STask } from "obsidian-dataview";
 import { useEffect, useState } from "react";
 
 export default function TasksView({
@@ -22,6 +22,7 @@ export default function TasksView({
 	const dv = getDataviewAPI();
 	const [isLoading, setIsLoading] = useState(dv.index.initialized);
 	const [pages, setPages] = useState((isLoading) ? dv.page(ctx.sourcePath) : []);
+	const { tasks, progress, rTasks, groupTasks } = useTaskList(pages);
 
 	useEffect(() => {
 		if (isLoading) {
@@ -36,38 +37,24 @@ export default function TasksView({
 		}
 	}, []);
 
-	return <>{!isLoading ? <Lading /> : <TaskListWrap pages={pages} source={source} sourcePath={ctx.sourcePath} />}</>;
-}
-
-function TaskListWrap({
-	pages,
-	source,
-	sourcePath,
-}: {
-	pages: DataArray<DataObject>;
-	source: string;
-	sourcePath: string;
-}) {
-	const { tasks, progress, rTasks, groupTasks } = useTaskList(pages);
-
 	return (
 		<>
-			<div className="tasksListWrap">
-				<CircleProgress
-					progressWidth={120}
-					strokeWidth={5}
-					progress={progress}
-				/>
-				<TaskList
-					tasks={tasks}
-					rTasks={rTasks}
-					groupTasks={groupTasks}
-				/>
-			</div>
-			{source !== "" && (
+			{!isLoading ? (
+				<Lading />
+			) : (
 				<>
-					<hr />
-					<Markdown content={source} sourcePath={sourcePath} />
+					<div className="tasksListWrap">
+						<CircleProgress
+							progressWidth={120}
+							strokeWidth={5}
+							progress={progress}
+						/>
+						<TaskList
+							tasks={tasks}
+							rTasks={rTasks}
+							groupTasks={groupTasks}
+						/>
+					</div>
 				</>
 			)}
 		</>

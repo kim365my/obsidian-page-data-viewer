@@ -7,8 +7,7 @@ import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
 import { MarkdownPostProcessorContext } from "obsidian";
-import pageData from "interface/pageData";
-import { DataArray, DataObject } from "obsidian-dataview";
+
 
 export default function ReactView({
 	source,
@@ -25,44 +24,6 @@ export default function ReactView({
 	const input = inputValidation(source);
 	const [isLoading, setIsLoading] = useState(dv.index.initialized);
 	const [pages, setPages] = useState((isLoading)? dv.pages(input.pages) :[]);
-
-	useEffect(() => {
-		if (isLoading) {
-			metadataChangeEvent(() => {
-				setPages(dv.pages(input.pages));
-			});
-		} else {
-			indexReadyEvent(() => {
-				setIsLoading(true);
-				setPages(dv.pages(input.pages));
-			});
-		}
-	}, []);
-
-	return (
-		<>
-			{!isLoading ? (
-				<Lading />
-			) : (
-				<PagesTable
-					input={input}
-					pages={pages}
-					sourcePath={ctx.sourcePath}
-				/>
-			)}
-		</>
-	);
-}
-
-function PagesTable({
-	input,
-	pages,
-	sourcePath,
-}: {
-	input: pageData;
-	pages: DataArray<DataObject>;
-	sourcePath: string;
-}) {
 	const pageData = usePage(pages, input);
 	useEffect(() => {
 		let data = pages;
@@ -81,17 +42,38 @@ function PagesTable({
 
 		pageData.setRendererPages(data);
 	}, [pages]);
+	
+	useEffect(() => {
+		if (isLoading) {
+			metadataChangeEvent(() => {
+				setPages(dv.pages(input.pages));
+			});
+		} else {
+			indexReadyEvent(() => {
+				setIsLoading(true);
+				setPages(dv.pages(input.pages));
+			});
+		}
+	}, []);
 
 	return (
-		<PagesDataContext.Provider value={pageData}>
-			<ToolBar input={input} />
-			<div className={input.cls}>
-				<Table
-					pages={pageData.pageSlice()}
-					rows={input.rows}
-					sourcePath={sourcePath}
-				/>
-			</div>
-		</PagesDataContext.Provider>
+		<>
+			{!isLoading ? (
+				<Lading />
+			) : (
+				<>
+					<PagesDataContext.Provider value={pageData}>
+						<ToolBar input={input} />
+						<div className={input.cls}>
+							<Table
+								pages={pageData.pageSlice()}
+								rows={input.rows}
+								sourcePath={ctx.sourcePath}
+							/>
+						</div>
+					</PagesDataContext.Provider>
+				</>
+			)}
+		</>
 	);
 }
