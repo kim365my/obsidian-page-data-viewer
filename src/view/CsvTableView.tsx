@@ -6,15 +6,14 @@ import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Table from "components/table/Table";
 import Lading from "components/Lading";
-import { MarkdownPostProcessorContext } from "obsidian";
 import { DataArray, DataObject } from "obsidian-dataview";
 
 export default function CsvTableView({
-	ctx,
 	source,
+	sourcePath,
 }: {
-	ctx: MarkdownPostProcessorContext;
 	source: string;
+	sourcePath: string;
 }) {
 	const dv = getDataviewAPI();
 	const input = csvInputValidation(source);
@@ -54,7 +53,7 @@ export default function CsvTableView({
 						<Table
 							pages={pageData.pageSlice()}
 							rows={input.rows}
-							sourcePath={ctx.sourcePath}
+							sourcePath={sourcePath}
 						/>
 					</div>
 				</>

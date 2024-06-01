@@ -7,13 +7,10 @@ If your plugin does not need CSS, delete this file.
 
 */
 /* loading spinner */
-.block-language-page-table .loading,
-.block-language-page-table-csv .loading {
+:is(.block-language-page-table, .block-language-page-table-csv, .block-language-page-tasks) .loading {
 	text-align: center;
 }
-.block-language-page-table .loading .loading_spinner,
-.block-language-page-table-csv .loading .loading_spinner {
-	margin: 0 auto;
+:is(.block-language-page-table, .block-language-page-table-csv, .block-language-page-tasks) .loading .loading_spinner {	margin: 0 auto;
 	width: 36px;
 	height: 36px;
 	border: 3px solid var(--ui1);
@@ -25,11 +22,12 @@ If your plugin does not need CSS, delete this file.
 	0% {transform: rotate(0deg);}	
 	100% {transform: rotate(360deg);}	
 }
-.block-language-page-table table td:has(.inner-icon) {
+
+table.page-table-viewer td:has(.inner-icon) {
 	display: flex;
 	gap: 0.3rem;
 }
-.block-language-page-table table td:has(.inner-icon) > * {
+table.page-table-viewer td:has(.inner-icon) > * {
 	padding: 0;
 }
 
@@ -117,14 +115,28 @@ If your plugin does not need CSS, delete this file.
 }
 
 /* tasks view */
-
 .tasksListWrap {
 	display: flex;
 	gap: 20px;
+}
+.block-language-page-table .tasksListWrap {
+	margin-top: auto;
+	padding-top: 2rem;
 }
 .tasksListWrap :is(h1, h2, h3, h4, h5, h6) {
 	margin: 0;
 }
 .taskList {
 	width: 100%;
+}
+
+.taskList summary {
+	cursor: pointer;
+	padding-top: 0.4em;
+}
+.taskList summary::marker {
+	transition: 0.2s;
+}
+.taskList details[open] > summary::marker {
+	transform: rotate(180deg);
 }

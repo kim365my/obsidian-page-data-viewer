@@ -6,17 +6,16 @@ import { useEffect, useState } from "react";
 import getDataviewAPI from "API/Dataview";
 import ToolBar from "components/toolbar/ToolBar";
 import Lading from "components/Lading";
-import { MarkdownPostProcessorContext } from "obsidian";
-
+import TasksListWrap from "components/TasksListWrap";
 
 export default function ReactView({
 	source,
-	ctx,
+	sourcePath,
 	metadataChangeEvent,
 	indexReadyEvent,
 }: {
 	source: string;
-	ctx: MarkdownPostProcessorContext;
+	sourcePath: string;
 	metadataChangeEvent: (handle: () => void) => void;
 	indexReadyEvent: (handle: () => void) => void;
 }) {
@@ -68,9 +67,14 @@ export default function ReactView({
 							<Table
 								pages={pageData.pageSlice()}
 								rows={input.rows}
-								sourcePath={ctx.sourcePath}
+								sourcePath={sourcePath}
 							/>
 						</div>
+						{input.options &&
+							input.options.includes("tasksView") &&
+							pages.length !== 0 && (
+								<TasksListWrap pages={pages} />
+							)}
 					</PagesDataContext.Provider>
 				</>
 			)}

@@ -18,7 +18,7 @@ export default class MyPlugin extends Plugin {
 			this.registerEvent(this.app.metadataCache.on("dataview:index-ready", handle));
 		}
 		const handleClick = (event: MouseEvent) => {
-			event.preventDefault();
+			event.stopPropagation();
 		}
 		this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {				
 			if (!ctx.sourcePath) return;
@@ -30,7 +30,7 @@ export default class MyPlugin extends Plugin {
 					<PluginContext.Provider value={this}>
 						<ReactView
 							source={source}
-							ctx={ctx}
+							sourcePath={ctx.sourcePath}
 							metadataChangeEvent={metadataChangeEvent}
 							indexReadyEvent={indexReadyEvent}
 						></ReactView>
@@ -48,8 +48,8 @@ export default class MyPlugin extends Plugin {
 				<ErrorBoundary FallbackComponent={ErrorPage}>
 					<PluginContext.Provider value={this}>
 						<TasksView
-							source={source}
-							ctx={ctx}
+							source={source.trim()}
+							sourcePath={ctx.sourcePath}
 							metadataChangeEvent={metadataChangeEvent}
 							indexReadyEvent={indexReadyEvent}
 						></TasksView>
@@ -65,7 +65,7 @@ export default class MyPlugin extends Plugin {
 			this.root.render(
 				<ErrorBoundary FallbackComponent={ErrorPage}>
 					<PluginContext.Provider value={this}>
-						<CsvTableView source={source} ctx={ctx}></CsvTableView>
+						<CsvTableView source={source} sourcePath={ctx.sourcePath}></CsvTableView>
 					</PluginContext.Provider>
 				</ErrorBoundary>
 			);

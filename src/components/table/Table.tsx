@@ -9,12 +9,12 @@ function Table({
 }: {
 	pages: DataArray<DataObject>;
 	rows: string[];
-	sourcePath: string
+	sourcePath: string;
 }) {
 
 	return (
 		<>
-			<table className="dataview table-view-table">
+			<table className="dataview table-view-table page-table-viewer">
 				<thead className="table-view-thead">
 					<tr className="table-view-tr-header">
 						{rows.map((row: string, index: number) => (
