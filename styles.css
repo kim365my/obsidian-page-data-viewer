@@ -134,9 +134,3 @@ table.page-table-viewer td:has(.inner-icon) > * {
 	cursor: pointer;
 	padding-top: 0.4em;
 }
-.taskList summary::marker {
-	transition: 0.2s;
-}
-.taskList details[open] > summary::marker {
-	transform: rotate(180deg);
-}

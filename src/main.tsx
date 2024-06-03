@@ -18,7 +18,7 @@ export default class MyPlugin extends Plugin {
 			this.registerEvent(this.app.metadataCache.on("dataview:index-ready", handle));
 		}
 		const handleClick = (event: MouseEvent) => {
-			event.stopPropagation();
+			event.preventDefault();
 		}
 		this.registerMarkdownCodeBlockProcessor("page-table", (source, el, ctx) => {				
 			if (!ctx.sourcePath) return;

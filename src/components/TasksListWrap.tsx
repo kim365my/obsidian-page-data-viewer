@@ -4,7 +4,7 @@ import { usePlugin } from "context/PluginContext";
 import useTaskList from "hooks/useTaskList";
 import { Platform, Vault } from "obsidian";
 import { DataArray, DataObject, STask } from "obsidian-dataview";
-import React from "react";
+import React, { useState } from "react";
 
 function TasksListWrap({ pages }: { pages: DataArray<DataObject>; }) {
 	const { tasks, rTasks, progress, groupTasks } = useTaskList(pages);
@@ -42,9 +42,10 @@ function TasksListWrap({ pages }: { pages: DataArray<DataObject>; }) {
 export default React.memo(TasksListWrap);
 
 function TaskDetails({ tasks, title }: { tasks: STask; title: string; }) {
+	const [open, setOpen] = useState(false);
 	return (
-		<details>
-			<summary>
+		<details onClick={(e) => e.preventDefault()} {...open ?{open: true}: {}}>
+			<summary onClick={() => setOpen(!open)}>
 				<span>{title}</span>
 				<span className="dataview small-text">
 					{tasks.length}
