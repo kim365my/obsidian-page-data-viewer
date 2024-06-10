@@ -7,7 +7,7 @@ export function filterPages(page: DataObject, selectFilter: filter): boolean {
 	const dv = getDataviewAPI();
 	const target = (selectFilter.target) ? String(selectFilter.target).toLowerCase() : "";
 	// filter type에 따라서 구분
-	const target_isInclude = selectFilter.target_isInclude == "true" || false;
+	const target_isInclude = selectFilter.target_isInclude ?? false;
 
 	switch (selectFilter.type) {
 		case "tags": {
