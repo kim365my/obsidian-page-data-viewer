@@ -17,19 +17,20 @@ export default function TasksView({
 }) {
 	const dv = getDataviewAPI();
 	const input = parseYaml(source);
+	const isPages = input && (input.pages !== null);
 	const [isLoading, setIsLoading] = useState(dv.index.initialized);
-	const [pages, setPages] = useState((isLoading) ? ((input.pages) ? dv.pages(input.pages) : dv.page(sourcePath)) : []);
+	const [pages, setPages] = useState((isLoading) ? ((isPages) ? dv.pages(input.pages) : dv.page(sourcePath)) : []);
 
 	useEffect(() => {
 		if (isLoading) {
 			metadataChangeEvent(() => {
-				const data = (input.pages) ? dv.pages(input.pages) : dv.page(sourcePath);
+				const data = (isPages) ? dv.pages(input.pages) : dv.page(sourcePath);
 				setPages(data);
 			});
 		} else {
 			indexReadyEvent(() => {
 				setIsLoading(true);
-				const data = (input.pages) ? dv.pages(input.pages) : dv.page(sourcePath);
+				const data = (isPages) ? dv.pages(input.pages) : dv.page(sourcePath);
 				setPages(data);
 			})
 		}

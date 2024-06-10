@@ -13,29 +13,58 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 
 ````
 ```page-table
-"header": "제목", // (선택)
-"pages": "(dataview 쿼리)",
-"rows": ["cover_url", "file.link"], // (선택 | 작성하지 않을 경우 기본 값 "file.link");
-"selectedValue": 20, // (선택 | 작성하지 않을 경우 기본 값 10)
-"filter": [ // (선택)
-	 {
-		 "label": "필터 목록에 표시할 이름",
-		 "type": "tags나 property, file.변수 사용가능",
-		 "target": "tags의 이름이나 property 속성명 또는 file.변수에서 포함시킬 대상",
-		 "target_content": "target", // (선택 | target이 property인 경우 target의 내용을 비교하기 위한 변수)
-		 "target_isInclude": "true | false" // (선택 | target이 type에 포함되어 있는지 판별)
-	 }
-],
-"filterDefault": ["label명을 작성"], // (선택)
-"sort": [ // (선택)
-	{
-		"label": "정렬 목록에 표시할 이름",
-		"type": "property나 file.cday, file.mday 등",
-		"sort": "asc나 desc"
-	}
-],
-"sortDefault": 1, // (선택 | 기본값은 0),
-"cls": "클래스명" // (선택)
+header: 제목 # 선택
+pages: "#독서" # dataview 쿼리
+rows : [cover_url, file.link, author, tags, book_note, status, rTime_created]   # 선택  | 작성하지 않을 경우 기본 값 "file.link"
+selectedValue : 12 # 선택 | 작성하지 않을 경우 기본 값 10
+filter : # 선택
+- label: # 필터 목록에 표시할 이름
+  type: # tags나 property, file.변수 사용가능 
+  target: # tags의 이름이나 property 속성명 또는 file.변수에서 포함시킬 대상
+  target_content: # property를 사용시 선택 | target이 property인 경우 target의 내용을 비교하기 위한 변수
+  target_isInclude: # 선택 | target이 type에 포함되어 있는지 판별, property와 사용하는 경우, target이 null인지 체크하는 역할
+- label: 📕 완독서
+  type: property
+  target: status
+  target_content: true
+
+- label: 📖 읽고 있는 책
+  type: property
+  target: status
+  target_content: false
+
+- label: eBook만
+  type: property
+  target: category
+  target_content: eBook
+
+- label: 영어공부만
+  type: property
+  target: genre
+  target_content: 영어
+
+- label: 프로그래밍만
+  type: tags
+  target: 프로그래밍
+  target_isInclude: true
+
+- label: 올해의 독서
+  type: property
+  target: created
+  target_content: 2024-01-01 ~ now
+
+filterDefault: [올해의 독서] # 선택
+sort :  # 선택
+- label: 완독일순 (최신순)  # 정렬 목록에 표시할 이름
+  type: finish_read_date # property나 file.cday, file.mday 등
+  sort: desc # asc or desc
+- label: 완독일순 (오래된순)
+  type: finish_read_date
+  sort: asc
+
+cls: 클래스명 # 선택
+options: [tasksView] # 선택
+
 ```
 ````
 
@@ -58,14 +87,33 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 - sort : (선택) sort를 추가할 수 있음
 - sortDefault : (선택) sort 중에서 기본적으로 사용하고 싶은 필터가 있을 경우 해당 번호 작성 (0부터 시작하므로 주의)
 - cls: (선택) 해당 테이블에 클래스 추가 가능
-
+- options: (선택) 
+	- tasksView : 밑 부분에 pages의 task를 표시해줌
 
 ## CSV 지원
 
 ````
 ```page-table-csv
-"pages":"etc/csv/좋아하는_노래.csv" 
+pages: "etc/csv/좋아하는_노래.csv" 
 ```
 ````
 
 필터 기능을 제외한 변수를 모두 사용할 수 있습니다.
+
+
+## Tasks View 지원
+
+````
+```page-tasks
+```
+````
+
+현재 페이지의 tasks 목록을 확인 할 수 있습니다.
+
+````
+```page-tasks
+pages: "#독서"
+```
+````
+
+pages 변수를 통해 tasks 목록을 볼 페이지를 지정할 수 있습니다.
