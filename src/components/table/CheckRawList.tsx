@@ -38,7 +38,7 @@ function RawMarkdown({ sourcePath, content, inline = true, cls }: {
 
 export const Markdown = React.memo(RawMarkdown);
 
-function RawEmbedHtml({ element }: { element: HTMLElement; }) {
+function RawEmbedHtml({ element, cls }: { element: HTMLElement; cls?: string }) {
     const container = useRef<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -47,7 +47,7 @@ function RawEmbedHtml({ element }: { element: HTMLElement; }) {
         container.current.appendChild(element);
     }, [container.current, element]);
 
-    return <span ref={container}></span>;
+    return <span ref={container} className={cls}></span>;
 }
 export const EmbedHtml = React.memo(RawEmbedHtml);
 
@@ -57,11 +57,13 @@ function CheckForRaw({
 	inline = true,
 	sourcePath,
 	relativeTime = false,
+	cls
 }: {
 	value: Literal;
 	inline: boolean;
 	sourcePath: string;
 	relativeTime?: boolean;
+	cls?: string;
 }) {
 	const dv = getDataviewAPI();
 
@@ -85,21 +87,21 @@ function CheckForRaw({
 		if (isImageEmbed(value)) {
 			const fileRealLink = getFileRealLink(value.path);
 			return (
-				<span>
+				<span className={cls}>
 					<img src={fileRealLink}></img>
 				</span>
 			);
 		}
-		return <Markdown content={value.markdown()} sourcePath={sourcePath} />;
+		return <Markdown content={value.markdown()} sourcePath={sourcePath} cls={cls} />;
 	} else if (dv.value.isHtml(value)) {
-		return <EmbedHtml element={value} />;
+		return <EmbedHtml element={value} cls={cls} />;
 	} else if (dv.value.isWidget(value)) {
 		if (dv.widgets.isListPair(value)) {
 			return (
-				<Fragment>
+				<>
 					<CheckRawList value={value.key} sourcePath={sourcePath} inline={inline} />:{" "}
 					<CheckRawList value={value.value} sourcePath={sourcePath} inline={inline} />
-				</Fragment>
+				</>
 			);
 		} else if (dv.widgets.isExternalLink(value)) {
 			return (
@@ -107,7 +109,7 @@ function CheckForRaw({
 					href={value.url}
 					rel="noopener"
 					target="_blank"
-					className="external-link"
+					className={`external-link ${cls}`}
 				>
 					{value.display ?? value.url}
 				</a>
@@ -120,7 +122,7 @@ function CheckForRaw({
 	} else if (dv.value.isArray(value)) {
 		if (!inline) {
 			return (
-				<ul className={"dataview dataview-ul dataview-result-list-ul"}>
+				<ul className={`dataview dataview-ul dataview-result-list-ul ${cls}`}>
 					{value.map((subValue: Literal, index: number) => (
 						<li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
 							<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
@@ -132,7 +134,7 @@ function CheckForRaw({
 			if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
 
 			return (
-				<span className="dataview dataview-result-list-span">
+				<span className={`dataview dataview-result-list-span ${cls}`}>
 					{value.map((subValue: Literal, index: number) => (
 						<Fragment key={"subValue" + String(subValue) + index}>
 							{index === 0 ? "" : ", "}
@@ -148,7 +150,7 @@ function CheckForRaw({
 		}
 		if (!inline) {
             return (
-                <ul className="dataview dataview-ul dataview-result-object-ul">
+                <ul className={`dataview dataview-ul dataview-result-object-ul ${cls}`}>
                     {Object.entries(value).map(([key, value], index) => (
                         <li className="dataview dataview-li dataview-result-object-li" key={"key" + key + index} >
                             {key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
@@ -159,7 +161,7 @@ function CheckForRaw({
         } else {
 			if (Object.keys(value).length == 0) return <Fragment>&lt;Empty Object&gt;</Fragment>;
 			return (
-				<span className="dataview dataview-result-object-span">
+				<span className={`dataview dataview-result-object-span ${cls}`}>
 					{Object.entries(value).map(([key, value], index) => (
 						<Fragment key={"dataview" + String(key) + index}>
 							{index == 0 ? "" : ", "}

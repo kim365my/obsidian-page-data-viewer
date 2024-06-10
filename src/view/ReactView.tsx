@@ -63,7 +63,7 @@ export default function ReactView({
 				<>
 					<PagesDataContext.Provider value={pageData}>
 						<ToolBar input={input} />
-						<div className={input.cls}>
+						<div className={`page-table-wrapper ${input.cls}`}>
 							<Table
 								pages={pageData.pageSlice()}
 								rows={input.rows}

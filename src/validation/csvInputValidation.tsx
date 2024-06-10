@@ -1,9 +1,42 @@
+import { getRealFile } from "Utils/getFileRealLink";
 import csvData from "interface/csvData";
 import { sort } from "interface/pageData";
+import { parseYaml } from "obsidian";
 
 export default function csvInputValidation(source: string): csvData {
-	const input = JSON.parse(`{${source}}`);
-	const defaultSelectedArr = [5, 10, 20, 30, 40, 50];
+	try {		
+		const input = parseYaml(source);
+		const data = {
+			pages: getRealFile(input.pages).path,
+			rows: input.rows || ["title"],
+			selectedValue: input.selectedValue ?? 10,
+			selectedArr: handleSelectedArrValue(input.selectedValue),
+			filter: null,
+			filterDefault: null,
+			sort: handleSort(input.sort),
+			selectedSortValue: input.sortDefault ?? 0,
+			header: input.header || null,
+			options: input.options || null,
+			cls: input.cls || ""
+		};
+		return data;
+	} catch (error) {
+		throw new Error("작성된 쿼리에서 오류가 발생했습니다.");	
+	}
+}
+
+function handleSelectedArrValue(selectedValue: number | null) {
+	const selectedArr = [5, 10, 20, 30, 40, 50];
+
+	if (selectedValue && !selectedArr.includes(selectedValue)) {
+		selectedArr.push(selectedValue);
+		selectedArr.sort((a, b) => a - b);
+	}
+
+	return selectedArr;
+}
+
+function handleSort(sort: sort[] | null) {
 	const sortList: sort[] = [
 		{
 			label: "작성순 (알파벳 순)",
@@ -16,25 +49,6 @@ export default function csvInputValidation(source: string): csvData {
 			sort: "asc",
 		},
 	];
-	if (input.sort) sortList.push(...input.sort);
-	if (input.selectedValue && !defaultSelectedArr.includes(input.selectedValue)) defaultSelectedArr.push(input.selectedValue);
-	const selectedArr = defaultSelectedArr.sort((a, b) => a - b);
-	
-	const data = {
-		pages: input.pages,
-		rows: input.rows ?? ["title"],
-		selectedValue: input.selectedValue ?? 10,
-		selectedArr: selectedArr,
-		filter: null,
-		sort: sortList,
-		selectedSortValue: input.sortDefault ?? 0,
-		header: input.header || null,
-		options: input.options || null,
-		cls: input.cls || ""
-	};
-	if (!data) {
-		throw new Error("작성된 쿼리에서 오류가 발생했습니다.");
-	}
-	return data;
+	if (sort) sortList.push(...sort);
+	return sortList;
 }
-

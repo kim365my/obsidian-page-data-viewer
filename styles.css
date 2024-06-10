@@ -6,6 +6,12 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+:is(.block-language-page-table, .block-language-page-table-csv, .block-language-page-tasks) + .edit-block-button {
+	right: 0 !important;
+}
+.block-language-page-table, .block-language-page-table-csv, .block-language-page-tasks {
+	padding: 15px 0;
+}
 /* loading spinner */
 :is(.block-language-page-table, .block-language-page-table-csv, .block-language-page-tasks) .loading {
 	text-align: center;
@@ -23,14 +29,6 @@ If your plugin does not need CSS, delete this file.
 	100% {transform: rotate(360deg);}	
 }
 
-table.page-table-viewer td:has(.inner-icon) {
-	display: flex;
-	gap: 0.3rem;
-}
-table.page-table-viewer td:has(.inner-icon) > * {
-	padding: 0;
-}
-
 /* toolbar */
 .toolbar {
     display: flex;
@@ -45,7 +43,7 @@ table.page-table-viewer td:has(.inner-icon) > * {
 }
 .toolbar-right {
     display: flex;
-	align-items: flex-end;
+	align-items: center;
 	margin-left: auto;
 }
 .is-mobile .toolbar-right,
@@ -114,6 +112,38 @@ table.page-table-viewer td:has(.inner-icon) > * {
 	text-overflow: ellipsis;
 }
 
+/* table */
+.cards table.dataview:is(.page-table-viewer, .page-csv-table-viewer) thead {
+	display: none;
+}
+.page-table-wrapper {
+	overflow: auto;
+}
+.table-view-tbody .file-title > a,
+.table-view-tbody .file-title > a:hover {
+	color: var(--text-normal);
+	text-decoration: none;
+	font-weight: 400;
+}
+.file-title > a::before {
+	content: "";
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: 4px;
+	vertical-align: text-bottom;
+	background-color: var(--text-normal);
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-file-text'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E");
+	mask-size: contain;
+	mask-repeat: no-repeat;
+	mask-position: center;
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='lucide lucide-file-text'%3E%3Cpath d='M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z'/%3E%3Cpath d='M14 2v4a2 2 0 0 0 2 2h4'/%3E%3Cpath d='M10 9H8'/%3E%3Cpath d='M16 13H8'/%3E%3Cpath d='M16 17H8'/%3E%3C/svg%3E");
+	-webkit-mask-size: contain;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center;
+}
+
+/* ------------- */
 /* tasks view */
 .tasksListWrap {
 	display: flex;

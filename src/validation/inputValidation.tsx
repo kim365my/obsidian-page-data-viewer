@@ -1,10 +1,62 @@
+import { getFileRelativePath } from "Utils/getFileRealLink";
 import pageData, { filter, sort } from "interface/pageData";
+import { parseYaml } from "obsidian";
 
 export default function inputValidation(source: string): pageData {
-	const input = JSON.parse(`{${source}}`);
-	const filter: filter[] = [{ label: "모두보기" }];
-	
-	// 정렬
+	try {
+		const input = parseYaml(source);
+		const data = {
+			pages: (input.pages) ? getFileRelativePath(input.pages): "",
+			rows: input.rows || ["file.link"],
+			selectedValue: input.selectedValue ?? 10,
+			selectedArr: handleSelectedArrValue(input.selectedValue),
+			filter: handleFilter(input.filter),
+			filterDefault: handleFilterDefault(input.filter, input.filterDefault),
+			sort: handleSort(input.sort),
+			selectedSortValue: input.sortDefault ?? 0,
+			header: input.header || null,
+			options: input.options || null,
+			cls: input.cls || ""
+		};
+		return data;
+	} catch (error) {
+		throw new Error("작성된 쿼리에서 오류가 발생했습니다.");
+	}
+}
+
+function handleSelectedArrValue(selectedValue: number | null) {
+	const selectedArr = [5, 10, 20, 30, 40, 50];
+
+	if (selectedValue && !selectedArr.includes(selectedValue)) {
+		selectedArr.push(selectedValue);
+		selectedArr.sort((a, b) => a - b);
+	}
+
+	return selectedArr;
+}
+
+function handleFilter(filter: filter[] | null) {
+	const filterArr: filter[] = [];
+	if (filter) {
+		filterArr.push({ label: "모두보기" }, ...filter);
+	}
+	return filterArr;
+}
+
+function handleFilterDefault(filter: filter[] | null, inputFilterDefault: string[] | null) {
+	const filterDefault: number[] = [];
+	if (filter && inputFilterDefault) {
+		filter.forEach((item, index: number) => {
+			// 기본적으로 사용하는 필터 추출
+			if (inputFilterDefault.some((b :string) => b === item.label)) {
+				filterDefault.push(index + 1);
+			}
+		})
+	}
+	return filterDefault;
+}
+
+function handleSort(sort: sort[] | null) {
 	const sortList: sort[] = [
 		{
 			label: "생성일순 (최신순)",
@@ -37,39 +89,7 @@ export default function inputValidation(source: string): pageData {
 			sort: "desc",
 		},
 	];
-	if (input.sort) sortList.push(...input.sort);
-	if (input.filter) filter.push(...input.filter);
-	const filterDefault: number[] = [];
-	const inputFilterDefault = input.filterDefault;
-	filter.forEach((item, index: number) => {
-		// 기본적으로 사용하는 필터 추출
-		if (inputFilterDefault && inputFilterDefault.some((b :string) => b === item.label)) {
-			filterDefault.push(index);
-		}
-	})
-	const defaultSelectedArr = [5, 10, 20, 30, 40, 50];
-	if (
-		input.selectedValue &&
-		!defaultSelectedArr.includes(input.selectedValue)
-	)
-		defaultSelectedArr.push(input.selectedValue);
-	const selectedArr = defaultSelectedArr.sort((a, b) => a - b);
-	const data = {
-		pages: input.pages,
-		rows: input.rows || ["file.link"],
-		selectedValue: input.selectedValue ?? 10,
-		selectedArr: selectedArr,
-		filter: input.filter ? filter : [],
-		filterDefault: input.filter ? filterDefault : [],
-		sort: sortList,
-		selectedSortValue: input.sortDefault ?? 0,
-		header: input.header || null,
-		options: input.options || null,
-		cls: input.cls || ""
-	};
+	if (sort) sortList.push(...sort);
 
-	if (!data) {
-		throw new Error("작성된 쿼리에서 오류가 발생했습니다.");
-	}
-	return data;
+	return sortList;
 }

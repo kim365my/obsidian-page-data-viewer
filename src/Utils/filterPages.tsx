@@ -18,7 +18,7 @@ export function filterPages(page: DataObject, selectFilter: filter): boolean {
 			const property = page[target];
 			// target이 프로퍼티인 경우 target은 key, target_content는 value인 형태
 			if (selectFilter.target_content) {
-				const target_content = selectFilter.target_content.toLowerCase().trim();
+				const target_content = String(selectFilter.target_content).toLowerCase();
 				if (dv.value.isDate(property)) {
 					if (target_content.includes("~")) {
 						// 기간 설정
@@ -67,7 +67,7 @@ export function filterPages(page: DataObject, selectFilter: filter): boolean {
 			return (target_isInclude) ? fileType.length !== 0 : fileType.some((value: Literal) => String(value.path).toLowerCase().includes(target));
 		}
 		default: {
-			console.log("pageDataRenderer.js: 작성하신 필터 타입은 지원하지 않습니다.");
+			console.log("pageDataRenderer.js: 작성하신 필터 타입은 지원하지 않습니다.", selectFilter);
 			break;
 		}
 	}

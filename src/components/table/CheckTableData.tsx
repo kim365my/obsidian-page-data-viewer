@@ -27,6 +27,7 @@ function CheckTableData({
 	if (row.contains("file.")) {
 		const fileType = row.replace("file.", "").trim();
 		const file = page.file[fileType];
+		let cls;
 		switch (fileType) {
 			case "tasks":
 				if (file.length !== 0) {
@@ -39,16 +40,9 @@ function CheckTableData({
 				}
 			case "name":
 			case "link":
-				return (
-					<>
-						<div className="inner-icon">
-							<FileText width={16} height={16} />
-						</div>
-						<CheckRawList value={file} sourcePath={sourcePath} inline={false}/>
-					</>
-				);
+				cls = "file-title";
 			default:
-				return <CheckRawList value={file} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} />;
+				return <CheckRawList value={file} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} cls={cls} />;
 		}
 	}
 
