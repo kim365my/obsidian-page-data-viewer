@@ -16,13 +16,22 @@ export function getFileRealLink(value: string) {
 
 export function getFileRelativePath(value: string) {
     if (!value.startsWith("#")) {
+        const filePath = this.app.workspace.getActiveFile();
+        const parent = filePath?.parent;
         if (value.startsWith("./")) {
-            const filePath = this.app.workspace.getActiveFile();
-            const parentPath = filePath?.parent?.path;
-            const isBase = (parentPath === "/");
-            value = value.replace(/^\.\//, !isBase ? (parentPath + "/"): "");
+            const parentPath = parent?.path;
+            value = replacePath(value, parentPath);
+        } else if (value.startsWith("../")) {
+            const grandParent = parent?.parent?.path;
+            value = replacePath(value, grandParent);
         }
         value = `"${value}"`
     }
     return value;
+}
+
+function replacePath(value: string, path: string) {
+    const endString = (value.endsWith("/")) ? "" : "/";
+    const result = value.replace(/^\.\//, !(path === "/") ? (path + endString): "");
+    return result;
 }
