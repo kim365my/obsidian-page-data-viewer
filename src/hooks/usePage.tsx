@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { PagesDataContextType } from "interface/PagesDataContextType";
-import pageData from "interface/pageData";
 import { DataArray, DataObject } from "obsidian-dataview";
 import { Platform } from "obsidian";
 import { filterPages } from "Utils/filterPages";
+import { pageData } from "interface/pageData";
 
 export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataContextType {
+	// 표시될 페이지
 	const [rendererPages, setRendererPages] = useState(pages);
-	// 현재 페이지
+	// 현재 페이지네이션 번호
 	const [currentPageNum, setCurrentPageNum] = useState(1);
 	// 화면에 표시할 데이터 리스트 갯수
 	const [viewListNum, setViewListNum] = useState(input.selectedValue);
@@ -49,6 +50,10 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 				data = pagesFiltering(data, selectList);
 			}
 			setFilteringPages(data);
+			// filterList
+			if (Object.keys(filterList).length !== 0) {
+				data = appliedFilterList(data, filterList);
+			}
 			// 검색어가 존재할 경우
 			if (searchValue !== "") {
 				data = pagesSearching(data, searchValue);
@@ -67,6 +72,10 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 			data = pagesFiltering(data, selectList);
 		}
 		setFilteringPages(data);
+		// filterList
+		if (Object.keys(filterList).length !== 0) {
+			data = appliedFilterList(data, filterList);
+		}
 		// 검색어가 존재할 경우
 		if (searchValue !== "") {
 			data = pagesSearching(data, searchValue);
@@ -74,7 +83,40 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 		setRendererPages(data);
 	};
 
+	const [filterList, setFilterList] = useState({} as {[key: string]: string});
+	const appliedFilterList = (data: DataArray<DataObject>, list: {[key: string]: string}) => {
+		data = data.filter((page: DataObject) => {
+			let result = true;
+			Object.entries(list).forEach(([key, value]) => {
+				if (typeof page[key] === "object") {
+					result = result && page[key].includes(value);
+				} else {
+					result = result && (String(page[key]) === value);
+				}
+			});
+			return result;
+		});
+		return data;
+	}
+	const handleFilterList = (item: string, selected: string) => {
+		const data = pagesFiltering(pages, selectFilterValue);		
+		const filterListKey = Object.keys(filterList);
+		const list = {...filterList};
+		if (selected === "모두보기" || filterListKey.contains(item)) {
+			delete list[item];
+		}
+		if (selected !== "모두보기") {
+			list[item] = selected;
+		}
+
+		setFilterList({ ...list});
+		const filterPages = appliedFilterList(data, list);
+		setFilteringPages(filterPages);
+		setRendererPages(filterPages);
+	}
+
 	const [filteringPages, setFilteringPages] = useState(pagesFiltering(pages, selectFilterValue));
+
 	// 검색
 	const [searchValue, setSearchValue] = useState("");
 	const pagesSearching = (data: DataArray<DataObject>, search: string) => {
@@ -156,6 +198,7 @@ export function usePage(pages:DataArray<DataObject>, input:pageData): PagesDataC
 		pagesFiltering,
 		pagesSorting,
 		pageSlice,
+		handleFilterList,
 	};
 }
 

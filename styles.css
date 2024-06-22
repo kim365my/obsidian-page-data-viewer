@@ -83,11 +83,11 @@ If your plugin does not need CSS, delete this file.
 .filter-showing-box {
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: space-between;
 	align-items: center;
 	width: 100%;
 	flex-wrap: wrap;
-	padding: 4px;
+	padding: 8px 0;
 	line-height: 1.8;
 	font-size: small;
 }
@@ -110,6 +110,40 @@ If your plugin does not need CSS, delete this file.
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+/* filter-list */
+.filter-list-container,
+.appliedFilter {
+    display: flex;
+}
+.filter-list {
+	position: relative;
+	border: 1px solid var(--divider-color);
+	margin-right: 6px;
+}
+.filter-list .filteringBtn {
+	padding: 2px 8px;
+}
+.filter-list .filter-list-title {
+	margin-right: 4px;
+}
+
+.filter-list .menu {
+	position: absolute;
+	top: 100%;
+    right: 0;
+	max-width: 32em;
+    max-height: 32em;
+	overflow: auto;
+}
+
+.filter-list.selected {
+	background: hsla(var(--interactive-accent-hsl), 0.1);
+	border: none;
+}
+.filter-list.selected .filter-list-title,
+.filter-list.selected .filter-list-title-icon .svg-icon {
+	color: var(--text-accent);
 }
 
 /* table */

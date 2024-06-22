@@ -1,13 +1,13 @@
 import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
 
-export default function FilterList({ filter }: { filter: filter[] }) {
+export default function AppliedFilter({ filter }: { filter: filter[] }) {
 	const { selectFilterValue, deleteFilter } = usePagesData();
 	return (
-		<div className="filter-showing-box">
+		<div className="appliedFilter">
 			{selectFilterValue && selectFilterValue.length !== 0 && (
 				<>
-					<span className="filter-tip">Filter</span>
+					<span className="filter-tip">Filter :</span>
 					{selectFilterValue.map((select) => deleteFilter && (
 						<button
 							key={"selectFilterItem" + select}

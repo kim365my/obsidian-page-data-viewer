@@ -1,14 +1,14 @@
 import { filter, sort } from "interface/pageData";
 import { FuzzySuggestModal } from "obsidian";
 
-export default function Modal(values: filter[] | sort[]) {
+export default function MenuModal(values: filter[] | sort[] | string[]) {
     const data = new Promise((resolve, reject) => {
-        this.MySuggestModal = class extends FuzzySuggestModal<filter | sort>{
+        this.MySuggestModal = class extends FuzzySuggestModal<filter | sort | string>{
             getItems() {
                 return values
             }
-            getItemText(val: filter | sort) {
-                return val.label;
+            getItemText(val: filter | sort | string) {
+                return (typeof val === "string")? val :val.label;
             }
             onChooseItem(val: filter | sort, event: MouseEvent | KeyboardEvent) {
                 resolve(val)

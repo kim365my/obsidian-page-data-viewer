@@ -9,19 +9,20 @@ export function MenuContainer({ list, selectBtnValue, clickHandle, useSeparator 
 	useSeparator: boolean
 }) {
 	return (
-		<div className="menu">
+		<div className="menu mod-no-icon">
 			{list.map((item, index: number) => (
 				<React.Fragment key={"ListItem" + index}>
 					<div
 						className={
 							selectBtnValue.includes(index)
 								? "menu-item mod-checked"
-								: "menu-item"
+								: "menu-item tappable"
 						}
 						data-index={index}
 						onMouseDown={(e) => e.preventDefault()}
 						onClick={() => clickHandle(index)}
 					>
+						<div className="menu-item-icon"></div>
 						<div className="menu-item-title">
 							{typeof item === "string" ? item : item.label}
 						</div>

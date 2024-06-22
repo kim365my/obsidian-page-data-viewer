@@ -3,8 +3,6 @@ import { getFileRealLink } from 'Utils/getFileRealLink';
 import { CheckRawList } from "./CheckRawList";
 import { isImageEmbed } from "./CheckRawList";
 import { DataObject, STask } from "obsidian-dataview";
-import Progress from 'components/progress/Progress';
-import { FileText } from 'lucide-react';
 
 export default React.memo(CheckTableData);
 
@@ -34,16 +32,21 @@ function CheckTableData({
 					const completedTasks = file.filter((t: STask) => t.completed);
 					const progress = Math.round((completedTasks.length / file.length || 0) * 100);
 		
-					return <Progress progress={progress} />;
+					return (
+						<span>
+							<progress value={progress} max="100"></progress>
+							&nbsp;
+							<span>{progress}%</span>
+						</span>
+					);
 				} else {
 					return <span>No tasks</span>
 				}
 			case "name":
 			case "link":
 				cls = "file-title";
-			default:
-				return <CheckRawList value={file} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} cls={cls} />;
 		}
+		return <CheckRawList value={file} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} cls={cls} />;
 	}
 
 	return <CheckRawList value={page[row]} sourcePath={sourcePath} inline={false} relativeTime={relativeTime} />;

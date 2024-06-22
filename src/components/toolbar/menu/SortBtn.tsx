@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { MenuContainer } from "./MenuContainer";
 import { sort } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
-import Modal from "./Modal";
 import { ArrowUpDown } from "lucide-react";
+import { Platform } from "obsidian";
+import MenuModal from "./MenuModal";
+import { MenuContainer } from "./MenuContainer";
 
-export default function SortBtn({sort, isMobile}: {sort: sort[], isMobile: boolean}) {
+export default function SortBtn({sort}: {sort: sort[]}) {
 	const { selectSortNum, handleSort } = usePagesData();
 	const [visible, setVisible] = useState(false);
+	const isMobile = Platform.isPhone;
 
 	const handleClick = () => {
 		if (isMobile) {
-			Modal(sort).then((selected) => {
+			MenuModal(sort).then((selected) => {
 				const index = sort.findIndex((item) => item === selected);
 				handleSort(index);
 			})

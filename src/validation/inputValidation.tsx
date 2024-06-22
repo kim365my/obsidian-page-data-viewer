@@ -1,5 +1,5 @@
 import { getFileRelativePath } from "Utils/getFileRealLink";
-import pageData, { filter, sort } from "interface/pageData";
+import { filter, pageData, sort } from "interface/pageData";
 import { parseYaml } from "obsidian";
 
 export default function inputValidation(source: string): pageData {
@@ -12,6 +12,7 @@ export default function inputValidation(source: string): pageData {
 			selectedArr: handleSelectedArrValue(input.selectedValue),
 			filter: handleFilter(input.filter),
 			filterDefault: handleFilterDefault(input.filter, input.filterDefault),
+			filterList: input.filterList || null,
 			sort: handleSort(input.sort),
 			selectedSortValue: input.sortDefault ?? 0,
 			header: input.header || null,

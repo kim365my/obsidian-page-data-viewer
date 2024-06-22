@@ -2,16 +2,19 @@ import { useState } from "react";
 import { MenuContainer } from "./MenuContainer";
 import { filter } from "interface/pageData";
 import { usePagesData } from "context/PagesDataContext";
-import Modal from "./Modal";
 import { FilterIcon } from "lucide-react";
+import { Platform } from "obsidian";
+import MenuModal from "./MenuModal";
 
 
-export default function Filter({filter, isMobile}: {filter: filter[], isMobile: boolean}) {
+export default function Filter({filter}: {filter: filter[]}) {
 	const { selectFilterValue, handleFilter } = usePagesData();
 	const [visible, setVisible] = useState(false);
+	const isMobile = Platform.isPhone;
+
 	const handleClick = () => {
 		if (isMobile) {
-			Modal(filter).then((selected) => {
+			MenuModal(filter).then((selected) => {
 				const index = filter.findIndex((item) => item === selected);
 				if (handleFilter) handleFilter(index);
 			})
@@ -19,6 +22,7 @@ export default function Filter({filter, isMobile}: {filter: filter[], isMobile: 
 			setVisible(!visible)
 		}
 	}
+	
 	return (
 		<div className="box" onClick={handleClick} onBlur={() => setVisible(false)} tabIndex={0}>
 			<button

@@ -48,7 +48,7 @@ export default function CsvTableView({
 				<Lading />
 			) : (
 				<>
-					<ToolBar input={input} />
+					<ToolBar input={input} pages={pages} />
 					<div className={input.cls}>
 						<Table
 							pages={pageData.pageSlice()}

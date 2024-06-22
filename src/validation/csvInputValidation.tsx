@@ -1,6 +1,5 @@
 import { getRealFile } from "Utils/getFileRealLink";
-import csvData from "interface/csvData";
-import { sort } from "interface/pageData";
+import { csvData, sort } from "interface/pageData";
 import { parseYaml } from "obsidian";
 
 export default function csvInputValidation(source: string): csvData {
@@ -11,8 +10,8 @@ export default function csvInputValidation(source: string): csvData {
 			rows: input.rows || ["title"],
 			selectedValue: input.selectedValue ?? 10,
 			selectedArr: handleSelectedArrValue(input.selectedValue),
-			filter: null,
-			filterDefault: null,
+			filter: [],
+			filterDefault: [],
 			sort: handleSort(input.sort),
 			selectedSortValue: input.sortDefault ?? 0,
 			header: input.header || null,
