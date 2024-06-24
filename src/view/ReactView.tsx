@@ -34,6 +34,10 @@ export default function ReactView({
 		) {
 			data = pageData.pagesFiltering(data, pageData.selectFilterValue);
 		}
+		// filterList
+		if (pageData.filterList && pageData.appliedFilterList) {
+			data = pageData.appliedFilterList(data, pageData.filterList);
+		}
 		// 검색
 		if (pageData.searchValue !== "") {
 			data = pageData.pagesSearching(data, pageData.searchValue);

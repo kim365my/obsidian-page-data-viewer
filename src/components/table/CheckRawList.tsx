@@ -6,6 +6,7 @@ import React, { useEffect, useRef } from "react";
 import { MarkdownRenderer } from "obsidian";
 import { usePlugin } from "context/PluginContext";
 import { renderMinimalDate, currentLocale, renderMinimalDuration, getRelativeTime } from "../../Utils/renderDate";
+import dvType from "Utils/dvType";
 
 function RawMarkdown({ sourcePath, content, inline = true, cls }: {
     content: string;
@@ -67,43 +68,42 @@ function CheckForRaw({
 }) {
 	const dv = getDataviewAPI();
 
-	if (dv.value.isNull(value) || value === undefined) {
-		return <>{dv.settings.renderNullAs}</>;
-	} else if (dv.value.isString(value) || typeof value === "string") {
-		return <Markdown content={value} sourcePath={sourcePath} />;
-	} else if (dv.value.isNumber(value) || dv.value.isBoolean(value)) {
-		return <>{"" + value}</>;
-	} else if (dv.value.isDate(value)) {
-		return (
-			<>
-				{relativeTime
-					? getRelativeTime(value, dv.settings, currentLocale())
-					: renderMinimalDate(value, dv.settings, currentLocale())}
-			</>
-		);
-	} else if (dv.value.isDuration(value)) {
-		return <>{renderMinimalDuration(value)}</>;
-	} else if (dv.value.isLink(value)) {
-		if (isImageEmbed(value)) {
-			const fileRealLink = getFileRealLink(value.path);
+	switch (dvType(value)) {
+		case "string":
+			return <Markdown content={value} sourcePath={sourcePath} />;
+		case "number":
+		case "boolean":
+			return <>{"" + value}</>;
+		case "date":
+			return (
+				<>
+					{relativeTime
+						? getRelativeTime(value, dv.settings, currentLocale())
+						: renderMinimalDate(value, dv.settings, currentLocale())}
+				</>
+			);
+		case "duration":
+			return <>{renderMinimalDuration(value)}</>;
+		case "link":
+			return <Markdown content={value.markdown()} sourcePath={sourcePath} cls={cls} />;
+		case "link_img":
 			return (
 				<span className={cls}>
-					<img src={fileRealLink}></img>
+					<img src={getFileRealLink(value.path)}></img>
 				</span>
 			);
-		}
-		return <Markdown content={value.markdown()} sourcePath={sourcePath} cls={cls} />;
-	} else if (dv.value.isHtml(value)) {
-		return <EmbedHtml element={value} cls={cls} />;
-	} else if (dv.value.isWidget(value)) {
-		if (dv.widgets.isListPair(value)) {
+		case "html":
+			return <EmbedHtml element={value} cls={cls} />;
+		case "widget":
+			return <b>&lt;unknown widget '{value.$widget}'&gt;</b>;
+		case "widget_list":
 			return (
 				<>
 					<CheckRawList value={value.key} sourcePath={sourcePath} inline={inline} />:{" "}
 					<CheckRawList value={value.value} sourcePath={sourcePath} inline={inline} />
 				</>
 			);
-		} else if (dv.widgets.isExternalLink(value)) {
+		case "widget_externalLink":
 			return (
 				<a
 					href={value.url}
@@ -114,65 +114,64 @@ function CheckForRaw({
 					{value.display ?? value.url}
 				</a>
 			);
-		} else {
-			return <b>&lt;unknown widget '{value.$widget}'&gt;</b>;
-		}
-	} else if (dv.value.isFunction(value)) {
-        return <Fragment>&lt;function&gt;</Fragment>;
-	} else if (dv.value.isArray(value)) {
-		if (!inline) {
-			return (
-				<ul className={`dataview dataview-ul dataview-result-list-ul ${cls}`}>
-					{value.map((subValue: Literal, index: number) => (
-						<li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
-							<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
-						</li>
-					))}
-				</ul>
-			);
-        } else {
-			if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
-
-			return (
-				<span className={`dataview dataview-result-list-span ${cls}`}>
-					{value.map((subValue: Literal, index: number) => (
-						<Fragment key={"subValue" + String(subValue) + index}>
-							{index === 0 ? "" : ", "}
-							<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
-						</Fragment>
-					))}
-				</span>
-			);
-		}
-	} else if (dv.value.isObject(value)) {
-		if (value?.constructor?.name && value?.constructor?.name != "Object") {
-			return <>&lt;{value.constructor.name}&gt;</>;
-		}
-		if (!inline) {
-            return (
-                <ul className={`dataview dataview-ul dataview-result-object-ul ${cls}`}>
-                    {Object.entries(value).map(([key, value], index) => (
-                        <li className="dataview dataview-li dataview-result-object-li" key={"key" + key + index} >
-                            {key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
-                        </li>
-                    ))}
-                </ul>
-            );
-        } else {
-			if (Object.keys(value).length == 0) return <Fragment>&lt;Empty Object&gt;</Fragment>;
-			return (
-				<span className={`dataview dataview-result-object-span ${cls}`}>
-					{Object.entries(value).map(([key, value], index) => (
-						<Fragment key={"dataview" + String(key) + index}>
-							{index == 0 ? "" : ", "}
-							{key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
-						</Fragment>
-					))}
-				</span>
-			);
-		}
+		case "function":
+			return <Fragment>&lt;function&gt;</Fragment>;
+		case "array":
+			if (!inline) {
+				return (
+					<ul className={`dataview dataview-ul dataview-result-list-ul ${cls}`}>
+						{value.map((subValue: Literal, index: number) => (
+							<li className="dataview-result-list-li"  key={"key" + String(subValue) + index} >
+								<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
+							</li>
+						))}
+					</ul>
+				);
+			} else {
+				if (value.length == 0) return <Fragment>&lt;Empty List&gt;</Fragment>;
+	
+				return (
+					<span className={`dataview dataview-result-list-span ${cls}`}>
+						{value.map((subValue: Literal, index: number) => (
+							<Fragment key={"subValue" + String(subValue) + index}>
+								{index === 0 ? "" : ", "}
+								<CheckRawList value={subValue} sourcePath={sourcePath} inline={inline} />
+							</Fragment>
+						))}
+					</span>
+				);
+			}
+		case "object":
+			if (value?.constructor?.name && value?.constructor?.name != "Object") {
+				return <>&lt;{value.constructor.name}&gt;</>;
+			}
+			if (!inline) {
+				return (
+					<ul className={`dataview dataview-ul dataview-result-object-ul ${cls}`}>
+						{Object.entries(value).map(([key, value], index) => (
+							<li className="dataview dataview-li dataview-result-object-li" key={"key" + key + index} >
+								{key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
+							</li>
+						))}
+					</ul>
+				);
+			} else {
+				if (Object.keys(value).length == 0) return <Fragment>&lt;Empty Object&gt;</Fragment>;
+				return (
+					<span className={`dataview dataview-result-object-span ${cls}`}>
+						{Object.entries(value).map(([key, value], index) => (
+							<Fragment key={"dataview" + String(key) + index}>
+								{index == 0 ? "" : ", "}
+								{key}: <CheckRawList value={value} sourcePath={sourcePath} inline={inline} />
+							</Fragment>
+						))}
+					</span>
+				);
+			}
+		default:
+			return <>{dv.settings.renderNullAs}</>;
 	}
-	return <>{dv.settings.renderNullAs}</>;
+	
 }
 
 export const CheckRawList = React.memo(CheckForRaw);

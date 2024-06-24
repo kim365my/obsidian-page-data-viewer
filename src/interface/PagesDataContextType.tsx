@@ -1,4 +1,5 @@
 import { DataArray, DataObject } from "obsidian-dataview";
+import { filterList } from "./pageData";
 
 export interface PagesDataContextType {
 	rendererPages: DataArray<DataObject>
@@ -25,5 +26,10 @@ export interface PagesDataContextType {
 	pagesFiltering ?: (filetingPages: DataArray<DataObject>, selectList: number[]) => DataArray<DataObject>,
 	pagesSorting: (index: number) => void,
 	pageSlice: () => DataArray<DataObject>
-	handleFilterList?: (item: string, selected: string) => void
+	filterList?: {[key: string]: filterList}
+	appliedFilterList?:(data: DataArray<DataObject>, list: {
+		[key: string]: filterList;
+	}) => DataArray<DataObject>
+	handleFilterList?: (property: string, selected: filterList) => void
+	filterListItemLength?:  (property: string, item: filterList) => number
 }

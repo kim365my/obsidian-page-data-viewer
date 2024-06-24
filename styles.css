@@ -131,12 +131,17 @@ If your plugin does not need CSS, delete this file.
 .filter-list .menu {
 	position: absolute;
 	top: 100%;
-    right: 0;
+    left: 0;
 	max-width: 32em;
     max-height: 32em;
 	overflow: auto;
 }
-
+.filter-list .menu .menu-item-title {
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 .filter-list.selected {
 	background: hsla(var(--interactive-accent-hsl), 0.1);
 	border: none;

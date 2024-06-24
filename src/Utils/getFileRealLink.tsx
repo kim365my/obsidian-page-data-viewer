@@ -35,3 +35,12 @@ function replacePath(value: string, replaceWord: string, path: string) {
     const result = value.replace(replaceWord, !(path === "/") ? (path + endString): "");
     return result;
 }
+
+export function linkFileToText(value: string) {
+    value = value.replace("[[", "");
+    value = value.replace("]]", "");
+    if (value.includes("/")) {
+        value = value.slice(value.lastIndexOf("/") + 1, value.length);
+    }
+    return value;
+}

@@ -1,4 +1,4 @@
-import { DataArray, DataObject } from "obsidian-dataview";
+import { DataArray, DataObject, Literal } from "obsidian-dataview";
 export interface pageData {
 	readonly pages: string;
 	readonly rows: Array<string>;
@@ -36,6 +36,28 @@ export interface filter {
 	"target"?: string;
 	"target_content"?: string;
 	"target_isInclude"?: string;
+}
+
+export interface filterList {
+	content: string;
+	label: string;
+	type: 
+	| "null"
+	| "string"
+	| "number"
+    | "boolean"
+	| "date"
+	| "duration"
+	| "link_img"
+	| "link"
+	| "html"
+	| "widget_list"
+	| "widget"
+	| "widget_externalLink"
+	| "function"
+    | "array"
+    | "object"
+    | "default";
 }
 export interface sort {
 	"label": string;
