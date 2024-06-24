@@ -3,7 +3,7 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 위의 레포를 플러그인으로 변환하였습니다
 
 # Obsidian page data viewer
-![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/945e394f-cf5b-479d-9936-174926efc566)
+![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/d05d5a1e-d6b8-4f35-aa86-d81a1465fb14)
 
 ## 필수 플러그인
 
@@ -15,6 +15,7 @@ https://github.com/kim365my/Obsidian-dataviewjs-template-table
 ```page-table
 header: 제목 # 선택
 pages: "#독서" # dataview 쿼리
+filterList : [tags, status, category, genre, author]
 rows : [cover_url, file.link, author, tags, book_note, status, rTime_created]   # 선택  | 작성하지 않을 경우 기본 값 "file.link"
 selectedValue : 12 # 선택 | 작성하지 않을 경우 기본 값 10
 filter : # 선택
@@ -76,6 +77,7 @@ options: [tasksView] # 선택
 	- rTime_(file.cday나 created 등) : 상대적으로 시간을 표시해줌
 - header: (선택) 제목추가
 - selectedValue: (선택) 한번에 표시될 페이지 수, 기본값 : 10
+- filterList: (선택) filter와 동일하지만 필터 선택 모달을 생성
 - filter : (선택) 테이블 필터링
 	- 변수목록
 		- label : 표시될 값을 작성
