@@ -124,6 +124,9 @@ function ListItem({
 	setSelectBtnValue: React.Dispatch<React.SetStateAction<number>>;
 }) {
 	const { handleFilterList, filterListItemLength } = usePagesData();
+	let ListLength = 0;
+	if (filterListItemLength) ListLength = filterListItemLength(property, item);
+	if (ListLength === 0) return <></>;
 
 	return (
 		<div
@@ -141,7 +144,7 @@ function ListItem({
 		>
 			<div className="menu-item-icon"></div>
 			<div className="menu-item-title">{item.label}</div>
-			<span>({filterListItemLength && filterListItemLength(property, item)})</span>
+			<span>({ListLength})</span>
 			{selectBtnValue === index && (
 				<div className="menu-item-icon mod-checked">
 					<Check className="svg-icon" />
