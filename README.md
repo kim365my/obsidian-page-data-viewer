@@ -78,6 +78,7 @@ options: [tasksView] # 선택
 - header: (선택) 제목추가
 - selectedValue: (선택) 한번에 표시될 페이지 수, 기본값 : 10
 - filterList: (선택) filter와 동일하지만 필터 선택 모달을 생성
+	- ![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/c0fbe4d0-8f2f-4a99-96ac-64c5797df1a3)
 - filter : (선택) 테이블 필터링
 	- 변수목록
 		- label : 표시될 값을 작성
@@ -91,8 +92,13 @@ options: [tasksView] # 선택
 - cls: (선택) 해당 테이블에 클래스 추가 가능
 - options: (선택) 
 	- tasksView : 밑 부분에 pages의 task를 표시해줌
+ 		- ![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/5f1ceb53-32d8-4e14-94b6-d00de6218b72)
+
 
 ## CSV 지원
+
+![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/9dc31516-a79c-4eca-81ed-5e0eb6d3e73d)
+
 
 ````
 ```page-table-csv
@@ -104,6 +110,9 @@ pages: "etc/csv/좋아하는_노래.csv"
 
 
 ## Tasks View 지원
+
+![image](https://github.com/kim365my/obsidian-page-data-viewer/assets/102598905/96c0fe1b-9dc5-4279-9006-241a72a4960b)
+
 
 ````
 ```page-tasks
